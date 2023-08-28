@@ -1,0 +1,48 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "soca laravel web api v1.0",
+        "description": "soca web API Description",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/history/{pg}": {
+            "get": {
+                "summary": "Get a list of history",
+                "operationId": "0682611335fd6cb088585fedb3c6cd68",
+                "parameters": [
+                    {
+                        "name": "pg",
+                        "in": "path",
+                        "description": "Page number for pagination",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of history"
+                    }
+                }
+            }
+        },
+        "/api/history/GetConvFormat": {
+            "get": {
+                "summary": "Get Convert Format",
+                "operationId": "db3d4447b9fa541d19d6ac9bbf5800ef",
+                "responses": {
+                    "200": {
+                        "description": "List of history"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "History"
+        }
+    ]
+}

@@ -1,0 +1,2437 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+
+<HTML>
+
+<head>
+
+ <style>
+
+ @media screen and (-webkit-min-device-pixel-ratio:0) {  /*safari and chrome*/
+    select {
+        height:60px;
+        width: 120px;
+        line-height:60px;
+        background:#f4f4f4;
+        text-align-last:center;
+    } 
+}
+select::-moz-focus-inner { /*Remove button padding in FF*/ 
+    border: 0;
+    padding: 0;
+} 
+
+optgroup { font-size:20px; }
+
+.btn-pop{
+      background-color: #c2d5ff;  
+      border-radius: 3px;
+      border:0px;
+      zoom:130%;
+
+  }
+  #background-pop{
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+  }
+  #div-pop{
+      background:#ffffff;
+      width:1000px;
+      height: 450px;
+      z-index: 1;
+      margin: 12% auto;
+      overflow: auto;
+  }
+  .div-top{
+      width: 100%;
+      height: auto;
+      background-color: #28a3e7;
+      color: #ffffff;
+  }
+  .div-top div{
+      padding: 3px 5px 5px 8px;
+  }
+/*  span{
+      color: white;
+      margin-bottom: 10px ;
+      margin-left: 20px ;
+      cursor: pointer;
+      float: right;
+  }*/
+  .div-content{
+      width: auto;
+      height: 300px;
+      overflow: auto;
+  }
+  .div-footer{
+      text-align: center;
+      background-color: darkgray;
+  }
+
+}
+ </style>
+
+<meta charset="utf-8">
+    <!-- 檢測瀏覽器版本 -->
+<!-- <script src="../jslib/BroswerType.js?151117"></script>     -->  
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" type="text/javascript">
+</script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.js"></script> -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+
+<script src="http://malsup.github.io/jquery.blockUI.js"></script>
+
+<link href="../User/User_Index.css?<?php echo rand(); ?>" rel="stylesheet" type="text/css"></link>
+<link href="../User/User_Edit.css?<?php echo rand(); ?>" rel="stylesheet" type="text/css"></link>
+
+<!-- <script src="../History/History-lng.js?<?php echo rand(); ?>" type="text/javascript"></script> -->
+
+<link href="../History/History_Index.css?<?php echo rand(); ?>" rel="stylesheet" type="text/css" />
+<script src="../History/History_Index.js?<?php echo rand(); ?>" type="text/javascript"></script>
+
+<link href="../History/SetFields.css?<?php echo rand(); ?>" rel="stylesheet" type="text/css" />
+<script src="../History/SetFields.js?<?php echo rand(); ?>" type="text/javascript"></script>
+
+<link href="../History/SetQuerySort.css?<?php echo rand(); ?>" rel="stylesheet" type="text/css" />
+<script src="../History/SetQuerySort.js?<?php echo rand(); ?>" type="text/javascript"></script>
+
+<link href="../History/History_List.css?<?php echo rand(); ?>" rel="stylesheet" type="text/css" />    
+<script src="../History/History_List_Maker.js?<?php echo rand(); ?>" type="text/javascript"></script>
+
+
+<!-- <div id="user_frame_center" style="float:left;position: relative;"></div>
+
+<div id="History_frame_center" style="float:left;position: relative;"></div>
+
+<div id="UserList_frame_center" style="float:left;position: relative;"></div> -->
+
+<div id="user_frame_center" style=""></div>
+<br>
+<div id="History_frame_center" style=""></div>
+<br>
+<div id="TimeZone_frame_center" style=""></div>
+<br>
+<div id="UnlockTimeZone_frame_center" style=""></div>
+<br>
+<div id="UserList_frame_center" style=""></div>
+<br>
+<!-- <button class="btn-pop" onclick="show()">彈出一個視窗</button> -->
+<div id="background-pop">
+        <div id="div-pop">
+            <div class="div-top">
+                <span id="close-button" 
+                style="float: right; 
+                       color: white;
+                       margin-bottom: 10px; 
+                       margin-left: 20px; 
+                       cursor: pointer;">×
+                    </span>
+                <div>
+                  <label id=HolidaySegment style=font-size:20px>
+                    1
+                  </label>
+                </div>
+                </div>
+            <div id="div-content"></div>
+            <!-- <div class="div-footer">
+                底部內容
+            </div> -->
+        </div>
+    </div>
+<br>
+<script type="text/javascript">
+
+var index=0;
+
+var imgB;
+
+var HolidayGroup = [];
+
+var User = {
+  Photo:"", 
+  Idx:"1", 
+  CardList:"0"
+}
+
+var UL = {
+  Photo:"選擇相片", 
+  Idx:"Number",
+  Upload:"上傳",
+  Name:"姓名",
+  Dep:"Dep",
+  RightPlan:"時區",
+  Card:"卡號",
+  Save:"更新相片",
+  Get:"查詢相片",
+  Delete:"刪除相片",
+  Capture:"抓拍",
+  SetCurrentTime:"傳送時間",
+  ReadCurrentTime:"讀取時間",
+  ReadMachineInfo:"讀取機器資訊",
+  SetUser:"新增人員",
+  GetUser:"查詢人員",
+  DeleteUser:"刪除人員",
+  SetCard:"新增卡號",
+  GetCard:"查詢卡號",
+  DeleteCard:"刪除卡號",
+  WordNumber:"工號",
+  DeviceAddress:"裝置IP",
+  Account:"帳號",
+  Password:"密碼",
+  Port:"Port",
+  UserList_Get:"查詢人員清單",
+  SendTimezone:"傳送時區",
+  GetTimezone:"讀取時區",
+  SendUnlockTimezone:"傳送不上鎖時段",
+  GetUnlockTimezone:"讀取不上鎖時段",
+  SendHoiday:"傳送例假日",
+  GetHoiday:"讀取例假日",
+  Opendoor:"開門",
+  Closedoor:"關門",
+  PermanentOpendoor:"常態開門",
+  PermanentClosedoor:"常態關門",
+}
+
+var TL = {
+  lng_Save:"儲存",
+  lng_Default:"預設值",
+  lng_Read_From_Reader:"從卡機讀取",
+  lng_Write_To_Reader:"寫入卡機",
+  lng_Group:"組別",
+  lng_Holiday_PassTime:"例假日開放通行時段",
+  lng_Holiday_No:"代號",
+  lng_Holiday_Time:"時段",
+  lng_TimeZone_No:"時區",
+  lng_Expiration_Date:"使用期限",
+  lng_Start_Time:"開始時間",
+  lng_End_Time:"結束時間",
+  lng_Time_Range:"時間範圍",
+  lng_Holiday_Control:"例假日管制",
+  lng_Contact:"接點",
+  lng_Sunday:"星期日",
+  lng_Monday:"星期一",
+  lng_Tuesday:"星期二",
+  lng_Wednesday:"星期三",
+  lng_Thursday:"星期四",
+  lng_Friday:"星期五",
+  lng_Saturday:"星期六",
+  lng_Enable:"啟用時區",
+  lng_Enable_ThisZone:"啟用時段功能",
+  lng_Enable_Week:"星期",
+  lng_Enable_Unlock:"啟用不上鎖時段",
+  lng_HolidayEnable:"啟用例假日",
+  lng_Holiday:"例假日組別",
+  lng_Start_Date:"例假日 開始日期",
+  lng_End_Date:"例假日 結束日期",
+  lng_Save_Btn:"確認",
+}
+
+//BlockUI Dialog Show
+//Parameter Sec : millonsecond
+function ShowBlockUI(sec) {
+    $.blockUI({
+        message: '<h1>請稍後...</h1>'
+      });
+    setTimeout(function() {
+      $.unblockUI();
+    }, sec);
+}
+
+Show_User_Edit_Html(User);
+
+Show_History_Html();
+
+Show_TimeZone_Html();
+
+Show_UnlockTimeZone_Html();
+
+function HolidayParameterReload()
+{
+    var today = new Date();
+    var today_year = today.getFullYear();
+    var today_month = today.getMonth() + 1;
+    var today_date = today.getDate();
+
+    var Holiday = {
+      HolidayEnable:"",
+      HolidaySDate:"",
+      HolidayEDate:"",
+      HolidaySegment:[],
+    }    
+
+    Holiday.HolidayEnable = false;
+
+    // Holiday.HolidaySDate = padLeft(today_year,4) + "-" +padLeft(today_month,2) + "-" + padLeft(today_date,2);
+
+    // Holiday.HolidayEDate = padLeft(today_year,4) + "-" +padLeft(today_month,2) + "-" + padLeft(today_date,2);
+
+    Holiday.HolidaySDate = "2001-01-01";
+    Holiday.HolidayEDate = "2001-01-01";
+
+    for(var i=0; i<8; i++)
+    {
+      Holiday.HolidaySegment.push({"Enablechecked":false,"HolidayStTime":"00:00:00","HolidayEdTime":"00:00:00"});
+    }  
+
+    return Holiday;
+}
+
+function HolidayParameterInit()
+{  
+  for(var i=0; i<64; i++)
+  {
+    var Data = [];
+    Data = HolidayParameterReload();
+    HolidayGroup.push(Data);
+  } 
+    //console.log(HolidayGroup);
+}
+
+//取得使用者
+function GetUserParamter() {
+
+  var Login = {
+      cmd:"",
+      DeviceAddress:"",
+      Account:"",
+      Password:"",
+      Port:"",
+      Name:"",
+      Card:"",
+      WordID:"",
+      RightPlan:"",
+      All_WorkID:"",
+      All_WorkID_Index:"",
+      Photo:"",
+      HistoryStartDate:"",
+      HistoryStartTime:"",
+      HistoryEndDate:"",
+      HistoryEndTime:"",
+
+      TimezoneEnable:"",
+      SelectTimezone:"",
+      TimezoneSegment:[],
+      UnlockTimezoneEnable:"",
+      UnlockTimezoneSegment:[],
+      HolidayEnable:"",
+      Holiday:[],
+      Holidayindex:"",
+    }
+
+  Login.DeviceAddress = $("#InputDeviceAddress").val();
+  Login.Port = $("#InputPort").val();
+  Login.Account = $("#InputAccount").val();
+  Login.Password = $("#InputPassword").val();
+  Login.Port = $("#InputPort").val();
+
+  var IName = encodeURI($("#InputName").val());
+  Login.Name = IName;
+  Login.Card = $("#InputCard").val();
+  Login.WordID = $("#InputWorkID").val();
+  Login.RightPlan = $("#InputRightPlan").val();
+
+  Login.HistoryStartDate = $('#SDate').val();
+  Login.HistoryStartTime = $("#STime").val();
+  Login.HistoryEndDate = $("#EDate").val();
+  Login.HistoryEndTime = $("#ETime").val();
+
+  Login.TimezoneEnable = $("#TimezoneEnable").prop('checked');
+  Login.SelectTimezone = $("#SelectTimezone option:selected").index()+1;
+
+
+
+  for(var i=1; i<57; i++)
+  { 
+    Login.TimezoneSegment.push({"Enablechecked":$("#TimezoneSeg"+i.toString()).prop('checked'),"StTime":$("#StTime"+i.toString()).val(),"EdTime":$("#EdTime"+i.toString()).val()});
+  }
+
+  Login.UnlockTimezoneEnable = $("#UnlockTimezoneEnable").prop('checked');
+
+  for(var i=1; i<57; i++)
+  { 
+    Login.UnlockTimezoneSegment.push({"UnlockEnablechecked":$("#UnlockTimezoneSeg"+i.toString()).prop('checked'),"UnlockStTime":$("#UnlockStTime"+i.toString()).val(),"UnlockEdTime":$("#UnlockEdTime"+i.toString()).val()});
+  }
+
+  Login.HolidayEnable = $("#HolidayEnable").prop('checked');
+
+  Login.Holidayindex = 0;
+
+  //console.log(Login);
+
+  return Login;
+}
+
+function UpdatePhoto() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '1';
+
+  if(imgB.length > 0)
+    {
+      //console.log(imgB);
+      Login.Photo = imgB;  
+    }
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        $.unblockUI();
+        return;
+      }
+      $.unblockUI();
+      var res = response.split('\r\n');
+      alert(res[1]);
+    }
+  });
+}
+
+function _arrayBufferToBase64( buffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
+function GetPhotoFromMachine() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '2';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);     
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        $.unblockUI();
+        return;
+      }
+      var splits = response.split('data:image/jpeg;base64');
+      //console.log(splits);  
+
+      $('#User_Photo_id').attr('src', 'data:image/png;base64'+splits);
+      
+      imgB = 'data:image/png;base64'+splits;
+
+      $.unblockUI();
+
+    }
+  });
+}
+
+function DeletePhoto() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '3';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        return;
+      }
+      $.unblockUI();
+      var res = response.split('\r\n');
+      alert(res[1]);     
+    }
+  });
+}
+
+function Capture() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '4';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        alert('失敗 , 請重試');
+        $.unblockUI();
+        return;
+      }
+
+      $.unblockUI();
+      var res = response.split('\r\n');
+      //alert(res[1]); 
+      $.unblockUI();
+      var splits = response.split('data:image/jpeg;base64');
+      //console.log(splits);  
+      $('#User_Photo_id').attr('src', 'data:image/png;base64'+splits);
+      imgB = 'data:image/png;base64'+splits;
+
+    }
+  });
+}
+
+function readURL(input) {
+
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      $('#User_Photo_id').attr('src', e.target.result);
+      imgB = e.target.result;
+    }
+    reader.readAsDataURL(input.files[0]);
+
+    $("#PhotoUpload_Submit").show();
+  }
+}
+
+function Show_History_Html()
+{
+  var HtmlStr = "";
+
+    HtmlStr += "<table border=2>";
+    HtmlStr += "<tr>";
+    HtmlStr += "<td>";
+    HtmlStr += "<div class=\"HistoryQuery_Main_Page\">";
+    HtmlStr += "<div id=\"Normal_Query\">";
+    HtmlStr += "<span class=\"history_span_titlename\">開始</span>";
+    HtmlStr += "<span class=\"history_span_smalltitle\">";
+    HtmlStr += "日期";
+    HtmlStr += "</span>";
+    HtmlStr += "<input class=\"history_input_date\" id=\"SDate\" />";
+    HtmlStr += "<span class=\"history_span_smalltitle\">";
+    HtmlStr += "時間";
+    HtmlStr += "</span>";
+    HtmlStr += "<input class=\"history_input_time\" id=\"STime\" />";
+    HtmlStr += "<br/>";
+    HtmlStr += "<span class=\"history_span_titlename\">結束</span>";
+    HtmlStr += "<span class=\"history_span_smalltitle\">日期";
+    HtmlStr += "</span>";
+    HtmlStr += "<input class=\"history_input_date\" id=\"EDate\" />";
+    HtmlStr += "<span class=\"history_span_smalltitle\">";
+    HtmlStr += "時間";
+    HtmlStr += "</span>";
+    HtmlStr += "<input class=\"history_input_time\" id=\"ETime\" />";
+    HtmlStr += "</div>";
+
+    HtmlStr += "<?php echo $Lang_inquiry_condition ?>";    
+    HtmlStr += "<div id=\"History_Query_Rules\"></div>";
+    HtmlStr += "<br>";
+    HtmlStr += "<p></p>";
+    HtmlStr += "<div style=\"clear:both;\" id=\"Query_Button\">";
+    
+    HtmlStr += "<div class=\"History_Page\" id=\"History_QueryProcess\"></div>";
+    HtmlStr += "<div class=\"History_Page\" id=\"HistoryQuery_Page\">";
+    HtmlStr += "<div class=\"HistoryQuery_Page_Bar\"></div>";
+    HtmlStr += "<div id=\"HistoryQuery_Page_Record\"></div>";
+    HtmlStr += "<div class=\"HistoryQuery_Page_Bar\"></div>";
+    HtmlStr += "</div>";
+    
+    HtmlStr += "<div class=\"History_Page\" id=\"SetFields_Page\"></div>";
+    HtmlStr += "<div id=\"div_Set_Convert\" style=\"display:none;\"></div>";
+    HtmlStr += "<div id=\"div_Add_Coustom_Convert\" style=\"display:none;\"></div>";
+    HtmlStr += "<div id=\"div_Cemera_List\" style=\"display:none;\"></div>";
+    HtmlStr += "<div class=\"User_Photo\"></div>";
+    HtmlStr += "<span class='User_Edit_Button' onclick='GetHistory();' >"+ '查詢歷史紀錄' +"</span>";
+    HtmlStr += "</div>";
+    HtmlStr += "</td>";
+    HtmlStr += "<tr>";
+   
+    HtmlStr += "<td>";
+    HtmlStr += "<div id='History_List_show'>";
+    HtmlStr += "<span id='HData' style=\"color:blue;\"></span>";
+    HtmlStr += "</div>";
+    HtmlStr += "</td>";
+    HtmlStr += "</tr>";
+    HtmlStr += "</table>";
+
+    $("#History_frame_center").html(HtmlStr);
+
+      // $('#SDate').datepicker();
+      // $('#EDate').datepicker();
+      // $('#STime').timepicker({'timeFormat': 'H:i',show2400: true});
+      // $('#ETime').timepicker({'timeFormat': 'H:i',show2400: true});
+
+      var today = new Date();
+      var today_year = today.getFullYear();
+      var today_month = today.getMonth() + 1;
+      var today_date = today.getDate();
+
+      $('#SDate').val(padLeft(today_year,4) + "-" +padLeft(today_month,2) + "-" + padLeft(today_date,2));
+      $('#STime').val("00:00:00");
+      
+      $('#EDate').val(padLeft(today_year,4) + "-" +padLeft(today_month,2) + "-" + padLeft(today_date,2));
+      $('#ETime').val("23:59:59");
+
+      $('#STime').css("width","60px");
+      $('#ETime').css("width","60px");
+
+      //H_Page.GetReaders();
+      //H_Page.GetUsers();
+
+      //Query_History(1);
+}
+
+function Show_UserList_Html()
+{
+  var HtmlStr = "";
+
+    HtmlStr += "<table border=2>";
+    HtmlStr += "<tr>";
+    HtmlStr += "<td>";
+    HtmlStr += "<div id='User_List_show'>";
+    HtmlStr += "<span id='UserData' style=\"color:blue;\"></span>";
+    HtmlStr += "</div>";
+    HtmlStr += "</td>";
+    HtmlStr += "</tr>";
+    HtmlStr += "</table>";
+
+    $("#UserList_frame_center").html(HtmlStr);
+  }
+
+function Show_TimeZone_Html()
+{
+  var HtmlStr = "";
+
+  HtmlStr += "<div style=width:2800px;height:1200px;overflow:auto;>";
+
+  HtmlStr += "<table border=2>";
+
+  HtmlStr += "<tr>";
+  HtmlStr += "<td>";
+  HtmlStr += "<div>";
+  HtmlStr += "<input type=checkbox id=TimezoneEnable name=TimezoneEnable checked />";
+  HtmlStr += "<label for=TimezoneEnable style=font-size:20px>"+TL.lng_Enable+"</label>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  HtmlStr += "<tr>";
+  HtmlStr += "<td rowspan=1>"+"<font size=5>"+TL.lng_TimeZone_No+": "+"</font>";
+  HtmlStr += "<select id=SelectTimezone style=font-size:20px>";
+  HtmlStr += "<optgroup>";  
+  for(var i=0;i<128;i++)
+  {
+    HtmlStr += "<option>"+(i+1).toString()+"</option>";
+  }
+  HtmlStr += "</optgroup>"; 
+  HtmlStr += "</select>";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>"
+
+  HtmlStr += "<tr>";
+
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"一"+"</font>";
+  // HtmlStr += "<select id=SelectWeek style=font-size:20px>";
+  // HtmlStr += "<optgroup>";
+  // HtmlStr += "<option>"+TL.lng_Monday+"</option>";
+  // HtmlStr += "</optgroup>"; 
+  // HtmlStr += "</select>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"二"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"三"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"四"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"五"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"六"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"日"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "</tr>";
+//-----------------時段1~8------------------------------------------------
+  for(var s=1;s<9;s++)
+  {
+      HtmlStr += "<tr>"; 
+      for(var i=0; i<7; i++)
+      {
+        if(i!=0)
+          HtmlStr += "<td></td>";
+        HtmlStr += "<td>";
+        HtmlStr += "<div>";
+        HtmlStr += "<input type=checkbox id=TimezoneSeg"+(s+(i*8)).toString()+" name=TimezoneSeg"+(s+(i*8)).toString()+" checked />";
+        HtmlStr += "<label for=TimezoneSeg"+(s+(i*8)).toString()+" style=font-size:20px>"+TL.lng_Enable_ThisZone+s.toString()+"</label>";
+        HtmlStr += "</div>";
+        HtmlStr += "</td>";
+      }
+      HtmlStr += "</tr>"
+
+      HtmlStr += "<tr>";
+      for(var i=0; i<7; i++)
+      { 
+        HtmlStr += "<td>";
+        HtmlStr += "<font size=4>"+TL.lng_Start_Time+"</font>";
+        HtmlStr += "</td>";
+        HtmlStr += "<td>";
+        HtmlStr += "<input class=\"Timezone_input_time\" id=\"StTime"+(s+(i*8)).toString()+"\"/>";
+        HtmlStr += "</td>";
+      }
+
+      HtmlStr += "<tr>";
+      for(var i=0; i<7; i++)
+      { 
+        HtmlStr += "<td>";
+        HtmlStr += "<font size=4>"+TL.lng_End_Time+"</font>";
+        HtmlStr += "</td>";
+        HtmlStr += "<td>";
+        HtmlStr += "<input class=\"Timezone_input_time\" id=\"EdTime"+(s+(i*8)).toString()+"\"/>";
+        HtmlStr += "</td>";
+      }
+
+      HtmlStr += "</tr>"; 
+ }
+  HtmlStr += "</tr>"; 
+  HtmlStr += "</table>";
+
+  HtmlStr += "<table border=2>";
+  HtmlStr += "<tr>";
+  HtmlStr += "<td>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='Set_Timezone();' >"+ UL.SendTimezone +"</span>";
+  HtmlStr += "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='GetTimezone();' >"+ UL.GetTimezone +"</span>";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+  HtmlStr += "</table>";
+
+  HtmlStr += "<table border=5>";
+
+
+
+  HtmlStr += "<tr>"
+  HtmlStr += "<td>"
+  HtmlStr += "<label for=Holidayzone style=font-size:20px>"+TL.lng_Holiday+"</label>";
+  HtmlStr += "</td>"
+  HtmlStr += "</tr>"
+
+  for(var i=0;i<4;i++)//16 海康只有64組例假日
+  {
+    HtmlStr += "<tr>";
+    HtmlStr += "<td>"; 
+    HtmlStr += "<label for=TimezoneEnable style=font-size:20px>"+TL.lng_Group+(i+1).toString()+"</label>";
+    HtmlStr += "</td>";
+
+    HtmlStr += "<td>"; 
+    HtmlStr += "<table border=2>";
+    HtmlStr += "<tr>";
+    
+    for(var j=0;j<16;j++)
+    {
+      HtmlStr += "<td>";
+        HtmlStr += "<span class='btn-pop' id='HolidayTime"+(i*16+j+1).toString()+"' onclick='show("+(i*16+j+1).toString()+");' >"+ TL.lng_Holiday_No+(j+1).toString() +"</span>";
+        HtmlStr += "</td>";
+    }
+    
+    HtmlStr += "</tr>";
+    HtmlStr += "</table>";
+    HtmlStr += "</td>";
+
+
+  HtmlStr += "</tr>";
+   
+  }
+  HtmlStr += "</table>";
+
+  HtmlStr += "<table border=2>";
+  HtmlStr += "<tr>";
+  HtmlStr += "<td>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='Set_Holiday();' >"+ UL.SendHoiday +"</span>";
+  HtmlStr += "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='Get_Holiday();' >"+ UL.GetHoiday +"</span>";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+  HtmlStr += "</table>";
+
+  HtmlStr += "</div>";
+
+  $("#TimeZone_frame_center").html(HtmlStr);
+
+  for(var i=1;i<57;i++)
+  {
+    $('#StTime'+i.toString()).val("00:00:00");
+    if(i%8==1)
+      $('#EdTime'+i.toString()).val("23:59:59");
+    else
+      $('#EdTime'+i.toString()).val("00:00:00");
+  }
+}
+
+function Show_UnlockTimeZone_Html()
+{
+  var HtmlStr = "";
+
+  HtmlStr += "<div style=width:2800px;height:1000px;overflow:auto;>";
+
+  HtmlStr += "<table border=2>";
+
+  HtmlStr += "<tr>";
+  HtmlStr += "<td>";
+  HtmlStr += "<div>";
+  HtmlStr += "<input type=checkbox id=UnlockTimezoneEnable name=UnlockTimezoneEnable checked />";
+  HtmlStr += "<label for=UnlockTimezoneEnable style=font-size:20px>"+TL.lng_Enable_Unlock+"</label>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+  HtmlStr += "<tr>";
+
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"一"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"二"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"三"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"四"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"五"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"六"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "<td></td>";
+  HtmlStr += "<td>"+"<font size=5>"+TL.lng_Enable_Week+"日"+"</font>";
+  HtmlStr += "</div>";
+  HtmlStr += "</td>";
+
+  HtmlStr += "</tr>";
+//-----------------時段1~8------------------------------------------------
+  for(var s=1;s<9;s++)
+  {
+      HtmlStr += "<tr>"; 
+      for(var i=0; i<7; i++)
+      {
+        if(i!=0)
+          HtmlStr += "<td></td>";
+        HtmlStr += "<td>";
+        HtmlStr += "<div>";
+        HtmlStr += "<input type=checkbox id=UnlockTimezoneSeg"+(s+(i*8)).toString()+" name=UnlockTimezoneSeg"+(s+(i*8)).toString()+" checked />";
+        HtmlStr += "<label for=UnlockTimezoneSeg"+(s+(i*8)).toString()+" style=font-size:20px>"+TL.lng_Enable_ThisZone+s.toString()+"</label>";
+        HtmlStr += "</div>";
+        HtmlStr += "</td>";
+      }
+      HtmlStr += "</tr>"
+
+      HtmlStr += "<tr>";
+      for(var i=0; i<7; i++)
+      { 
+        HtmlStr += "<td>";
+        HtmlStr += "<font size=4>"+TL.lng_Start_Time+"</font>";
+        HtmlStr += "</td>";
+        HtmlStr += "<td>";
+        HtmlStr += "<input class=\"Timezone_input_time\" id=\"UnlockStTime"+(s+(i*8)).toString()+"\"/>";
+        HtmlStr += "</td>";
+      }
+
+      HtmlStr += "<tr>";
+      for(var i=0; i<7; i++)
+      { 
+        HtmlStr += "<td>";
+        HtmlStr += "<font size=4>"+TL.lng_End_Time+"</font>";
+        HtmlStr += "</td>";
+        HtmlStr += "<td>";
+        HtmlStr += "<input class=\"Timezone_input_time\" id=\"UnlockEdTime"+(s+(i*8)).toString()+"\"/>";
+        HtmlStr += "</td>";
+      }
+
+      HtmlStr += "</tr>"; 
+ }
+  HtmlStr += "</tr>"; 
+
+  HtmlStr += "<tr>";
+  HtmlStr += "<td>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='SetUnlockTimezone();' >"+ UL.SendUnlockTimezone +"</span>";
+  HtmlStr += "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='GetUnlockTimezone();' >"+ UL.GetUnlockTimezone +"</span>";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+  HtmlStr += "</table>";
+  HtmlStr += "</div>";
+
+  $("#UnlockTimeZone_frame_center").html(HtmlStr);
+
+  for(var i=1;i<57;i++)
+  {
+    $('#UnlockStTime'+i.toString()).val("00:00:00");
+    if(i%8==1)
+      $('#UnlockEdTime'+i.toString()).val("23:59:59");
+    else
+      $('#UnlockEdTime'+i.toString()).val("00:00:00");
+  }
+  
+}
+
+function padLeft(str,lenght)
+{
+  if (typeof str == "number") { str = str.toString();}
+  if (typeof str == "string") {
+    if(str.length >= lenght)
+      return str;
+    else
+      return padLeft("0" +str,lenght);
+  }
+}
+
+function Show_User_Edit_Html(User) {
+  var HtmlStr = "";
+  HtmlStr += "<table border=2>";
+  HtmlStr += "<tr>";
+  //相片 start
+  HtmlStr += "<td>";
+
+  HtmlStr += "<div id='User-Photo'>";
+
+  if (User.Photo == undefined) {User.Photo = "";}
+
+  HtmlStr += "<img id='User_Photo_id' class='User_Photo_img' src='"+ User.Photo +"' ";    
+  HtmlStr += "onclick=window.open(this.src) />";  
+  HtmlStr += "</div>";
+
+  HtmlStr += "<br>";
+  HtmlStr += "<br>";
+  HtmlStr += "<br>";
+
+  HtmlStr += "<div><label class='PhotoUpload' for='Photo_File_Path'>"+ UL.Photo +"</label></div>";
+
+  HtmlStr += "<div style='display:none;'>";
+
+  HtmlStr += "  <iframe style='width:0; height:0; border:0;' name='form-target'></iframe> ";
+  HtmlStr += "  <form method='post' action='' enctype='multipart/form-data' target='form-target' onsubmit='UpdatePhoto();'>";
+  HtmlStr += "    <input type='text' name='MAX_FILE_SIZE' value='1024000' style='display:none;' />";
+  HtmlStr += "    <input type='file' id='Photo_File_Path' accept='image/*' name='myfile' onchange='readURL(this);' />";
+  HtmlStr += "    <input type='text' name='User_Idx' value='"+ User.Idx +"' style='display:none;' />";
+  HtmlStr += "    <input type='submit' id='Upload_Photo_submit' name='sub' value='"+ UL.Upload +"' />";
+  HtmlStr += "  </form> ";
+
+  HtmlStr += "</div>";
+
+  HtmlStr += "</td>";
+  //相片 end
+  HtmlStr += "<td>";
+  HtmlStr += "<table border=1>";
+
+
+  //裝置位址
+  HtmlStr += "<tr>";
+  HtmlStr += "<td class='DeviceAddress'>"+ UL.DeviceAddress + "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<Input id='InputDeviceAddress' type=Text value='"+ "192.168.10.151" +"' onchange=UserName_Change(this) />";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  //裝置Port
+  HtmlStr += "<tr>";
+  HtmlStr += "<td class='Port'>"+ UL.Port + "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<Input id='InputPort' type=Text value='"+ "8000" +"' onchange=UserName_Change(this) />";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  //帳號
+  HtmlStr += "<tr>";
+  HtmlStr += "<td class='Account'>"+ UL.Account + "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<Input id='InputAccount' type=Text value='"+ "admin" +"' onchange=UserName_Change(this) />";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  //密碼
+  HtmlStr += "<tr>";
+  HtmlStr += "<td class='Password'>"+ UL.Password + "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<Input id='InputPassword' type=Password value='"+ "k1111111" +"' onchange=UserName_Change(this) />";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  HtmlStr += "<tr>";
+  HtmlStr += "</tr>";
+  HtmlStr += "<tr>";
+  HtmlStr += "</tr>";
+
+  //工號
+  HtmlStr += "<tr>";
+  HtmlStr += "<td class='User_WorkID'>"+ UL.WordNumber + "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<Input id='InputWorkID' type=Text value='"+ "1" +"' onchange=UserName_Change(this) />";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  //名稱
+  HtmlStr += "<tr>";
+  HtmlStr += "<td class='User_Name'>"+ UL.Name +"</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<Input id='InputName' type=Text value='"+ "" +"' onchange=UserName_Change(this) />";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  //卡號
+  HtmlStr += "<tr>";
+  HtmlStr += "<td class='User_Card'>"+ UL.Card + "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<Input id='InputCard' type=Text value='"+ "" +"' onchange=UserName_Change(this) />";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  //時區
+  HtmlStr += "<tr>";
+  HtmlStr += "<td class='User_RightPlan'>"+ UL.RightPlan + "</td>";
+  HtmlStr += "<td>";
+  HtmlStr += "<Input id='InputRightPlan' type=Text value='"+ "1" +"' onchange=UserName_Change(this) />";
+  HtmlStr += "</td>";
+  HtmlStr += "</tr>";
+
+  HtmlStr += "</table>";
+  HtmlStr += "<br>";
+
+  HtmlStr += "<div style='margin: 8px;'>";
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='SetUser();' >"+ UL.SetUser +"</span>";
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='GetUser();' >"+ UL.GetUser +"</span>";
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='DeleteUser();' >"+ UL.DeleteUser +"</span>";
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='GetAllUser();' >"+ UL.UserList_Get +"</span>";
+
+  // HtmlStr += "<span class='User_Edit_Button' onclick='Test();' >"+ 'Test' +"</span>";
+
+  HtmlStr += "<br>";
+  HtmlStr += "<br>";
+
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='SetCard();' >"+ UL.SetCard +"</span>";
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='GetCard();' >"+ UL.GetCard +"</span>";
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='DeleteCard();' >"+ UL.DeleteCard +"</span>";
+
+  HtmlStr += "<br>";
+  HtmlStr += "<br>";
+
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='UpdatePhoto();' >"+ UL.Save +"</span>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='GetPhotoFromMachine();' >"+ UL.Get +"</span>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='DeletePhoto();' >"+ UL.Delete +"</span>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='Capture();' >"+ UL.Capture +"</span>";
+
+  HtmlStr += "<br>";
+  HtmlStr += "<br>";
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='SendCurrentTime();' >"+ UL.SetCurrentTime +"</span>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='ReadCurrentTime();' >"+ UL.ReadCurrentTime +"</span>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='ReadMachineInfo();' >"+ UL.ReadMachineInfo +"</span>";
+
+  HtmlStr += "<br>";
+  HtmlStr += "<br>";
+
+  HtmlStr += "<span class='User_Edit_Button' onclick='Doorcontrol(1);' >"+ UL.Opendoor +"</span>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='Doorcontrol(2);' >"+ UL.Closedoor +"</span>";  
+  HtmlStr += "<span class='User_Edit_Button' onclick='Doorcontrol(3);' >"+ UL.PermanentOpendoor +"</span>";
+  HtmlStr += "<span class='User_Edit_Button' onclick='Doorcontrol(4);' >"+ UL.PermanentClosedoor +"</span>";
+
+  HtmlStr += "</div>";
+  
+  HtmlStr += "<br>";
+
+  HtmlStr += "<br>";
+  HtmlStr += "<br>";
+
+  $("#user_frame_center").html(HtmlStr);
+
+  return HtmlStr;
+}   
+
+function SetUser() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '5';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        return;
+      }
+
+      $.unblockUI();
+      var res = response.split('\r\n');
+      alert(res[1]);      
+    }
+  });
+}
+
+function GetUser() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '6';
+  Login.All_WorkID ='No'; //查詢單一資料
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+       //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        if(ExceptMes[1]=='no this EmployeeNo person\r\n')
+          alert('無此使用者');
+        else
+          alert(ExceptMes[1]);
+        $.unblockUI();
+        return;
+      }
+
+      var splits = response.split('Result:'); 
+      var data = JSON.parse(splits[1]);
+      console.log(data);
+      $('#InputName').val(urldecode(urldecode(data[0].name)));
+      $('#InputRightPlan').val(data[0].RightPlan[0].planTemplateNo);
+       $.unblockUI();
+    }
+  });
+}
+
+function urldecode(str) {
+
+   return decodeURIComponent((str+'').replace(/\+/g, '%20'));
+}
+
+// Convert a hex string to a byte array
+function hexToBytes(hex) {
+    let bytes = [];
+    for (let c = 0; c < hex.length; c += 2)
+        bytes.push(parseInt(hex.substr(c, 2), 16));
+    return bytes;
+}
+
+function ShowBytes(Databytes) {
+  var bytes = [];
+  for(var i=0; i<Databytes.length; i++) {
+    var code = Databytes.charCodeAt(i);
+    bytes = bytes.concat([code]);
+  }
+  console.log(bytes);
+}
+
+function DeleteUser() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '7';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        return;
+      }
+
+      $.unblockUI();
+      var res = response.split('\r\n');
+      alert(res[1]);
+    }
+  });
+}
+
+function GetHistory() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '8';
+
+  $("#HData").html("");
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      var History = response.split('\r\n');   
+      for(var i=0; i<History.length-1; i+=2)
+      {
+         if(CheckResponseStatus(History[i])!=true)
+          {
+            var ExceptMes = History[i].split('ExceptionMessange:');
+            alert(ExceptMes[1]);
+            continue;
+          } 
+ 
+         var data = History[i+1].split('Result:');
+
+         var HistoryData = JSON.parse(data[1]);
+         console.log(HistoryData);
+
+         $("#HData").css("font-size","1px");
+
+         $("#HData").append(HistoryData.struAcsEventInfo.dwSerialNo+' ');
+
+         $("#HData").append(padLeft(HistoryData.struTime.dwYear,4)+'/');
+         $("#HData").append(padLeft(HistoryData.struTime.dwMonth,2)+'/');
+         $("#HData").append(padLeft(HistoryData.struTime.dwDay,2)+' ');
+         $("#HData").append(padLeft(HistoryData.struTime.dwHour,2)+':');
+         $("#HData").append(padLeft(HistoryData.struTime.dwMinute,2)+':');
+         $("#HData").append(padLeft(HistoryData.struTime.dwSecond,2)+' ');
+          
+         $("#HData").append('工號:'+HistoryData.struAcsEventInfo.dwEmployeeNo+' '); 
+
+          if(HistoryData.dwMajor==5) //事件(event)
+          {
+            if(HistoryData.dwMinor==0x4b)
+            {           
+              if(HistoryData.struAcsEventInfo.byAttendanceStatus!=0)
+              {
+                $("#HData").append('人臉驗證通過'+' '+' 考勤狀態:'+HistoryData.struAcsEventInfo.byAttendanceStatus);
+              }
+              else
+              {
+                $("#HData").append('人臉驗證通過'+' ');
+              }
+
+            }
+            else if(HistoryData.dwMinor==0x4c)
+            {
+              $("#HData").append('人臉驗證失敗'+' ');
+            }
+            else if(HistoryData.dwMinor==21)
+            {
+              $("#HData").append('門鎖打開'+' ');
+            }
+            else if(HistoryData.dwMinor==22)
+            {
+              $("#HData").append('門鎖關閉'+' ');
+            }
+            else if(HistoryData.dwMinor==9)
+            {
+              var Card = '';
+
+              for(var j=0;j<HistoryData.struAcsEventInfo.byCardNo.length;j++)
+              {
+                if(HistoryData.struAcsEventInfo.byCardNo[j]==0)
+                {
+                  break;
+                }
+                Card+=String.fromCharCode(HistoryData.struAcsEventInfo.byCardNo[j]);                
+              }  
+              //console.log(Card);
+
+              $("#HData").append('卡號未登錄'+' '+Card);
+
+             
+            }
+            else if(HistoryData.dwMinor==1)
+            {
+              var Card = '';
+
+              for(var j=0;j<HistoryData.struAcsEventInfo.byCardNo.length;j++)
+              {
+                if(HistoryData.struAcsEventInfo.byCardNo[j]==0)
+                {
+                  break;
+                }
+                Card+=String.fromCharCode(HistoryData.struAcsEventInfo.byCardNo[j]);                
+              } 
+
+              if(HistoryData.struAcsEventInfo.byAttendanceStatus!=0)
+              {
+                $("#HData").append('有效卡進入'+' '+Card+' 考勤狀態:'+HistoryData.struAcsEventInfo.byAttendanceStatus);
+              }
+              else
+              {
+                $("#HData").append('有效卡進入'+' '+Card);
+              }              
+            }
+            else if(HistoryData.dwMinor==19)
+            {
+              $("#HData").append('常態開門狀態開始'+' ');
+            }
+            else if(HistoryData.dwMinor==20)
+            {
+              $("#HData").append('常態開門狀態結束'+' ');
+            }
+            else if(HistoryData.dwMinor==31)
+            {
+              $("#HData").append('常態關門狀態開始'+' ');
+            }
+            else if(HistoryData.dwMinor==32)
+            {
+              $("#HData").append('常態關門狀態結束'+' ');
+            }
+            else
+            {
+              $("#HData").append(HistoryData.dwMinor+' ');
+            }
+          }
+
+          if(HistoryData.dwMajor==2) //例外(exception)
+          {
+            if(HistoryData.dwMinor==1024)
+            {
+              $("#HData").append('設備上電啟動'+' ');
+            }
+            else if(HistoryData.dwMinor==39)
+            {
+              $("#HData").append('網路連接失敗'+' ');
+            }
+            else if(HistoryData.dwMinor==1031)
+            {
+              $("#HData").append('網路恢復連接'+' ');
+            }
+            else
+            {
+              $("#HData").append(HistoryData.dwMinor+' ');
+            }
+          }
+
+          if(HistoryData.dwMajor==3) //操作(operation)
+          {
+            if(HistoryData.dwMinor==112)
+            {
+              $("#HData").append('遠程登錄'+' ');
+            }
+            else if(HistoryData.dwMinor==113)
+            {
+              $("#HData").append('遠程登出'+' ');
+            }
+            else if(HistoryData.dwMinor==80)
+            {
+              $("#HData").append('臉部辨識失敗'+' ');
+            }
+            else if(HistoryData.dwMinor==1028)
+            {
+              $("#HData").append('手動校準時間'+' ');
+            }
+            else if(HistoryData.dwMinor==121)
+            {
+              $("#HData").append('遠程佈防'+' ');
+            }
+            else if(HistoryData.dwMinor==1024)
+            {
+              $("#HData").append('遠程開門'+' ');
+            }
+            else if(HistoryData.dwMinor==1025)
+            {
+              $("#HData").append('遠程關門'+' ');
+            }
+            else if(HistoryData.dwMinor==1026)
+            {
+              $("#HData").append('遠程常態開門'+' ');
+            }
+            else if(HistoryData.dwMinor==1027)
+            {
+              $("#HData").append('遠程常態關門'+' ');
+            }
+            else
+            {
+              $("#HData").append(HistoryData.dwMinor+' ');
+            }
+          }  
+
+
+         $("#HData").append("<br><br>");
+      }
+  
+       $.unblockUI();
+    }
+  });
+}
+
+function SetCard() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '9';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        return;
+      }
+      $.unblockUI();
+      var res = response.split('\r\n');
+      alert(res[1]);
+    }
+  });
+}
+
+function GetCard() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '10';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        if(ExceptMes[1]=='There is no this card\r\n')
+          alert('此工號不存在卡號');
+        else
+          alert(ExceptMes[1]);
+         $("#InputCard").val('');
+         $("#InputName").val('');   
+         $('#User_Photo_id').attr('src', ''); 
+         $.unblockUI();               
+         return;
+      }
+
+      var splits = response.split('\r\n');    
+      //console.log(splits);
+
+      var UserName = splits[2].toString().split(':');
+      console.log(urldecode(UserName[1]));
+      //ShowBytes(UserName[1]);
+      $('#InputCard').val(urldecode(UserName[1]));
+
+      $.unblockUI();
+    }
+  });
+}
+
+function DeleteCard() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '11';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        return;
+      }
+      $.unblockUI();
+      var res = response.split('\r\n');
+      alert(res[1]);
+    }
+  });
+}
+
+function GetAllUser() {
+
+  $("#HData").html('');
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '6';
+  Login.All_WorkID ='Yes'; //查詢所有清單資料
+  console.log(index);
+  if(index==0)
+  {
+    ShowBlockUI(10000);
+    Show_UserList_Html();
+    $("#UserData").html('');
+  }
+
+  Login.All_WorkID_Index = index.toString();
+  
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+         
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        if(ExceptMes[1]=='no this EmployeeNo person\r\n')
+          alert('無此使用者');
+        else
+          alert(ExceptMes[1]);
+        $.unblockUI();
+        return;
+      }
+
+      var splits = response.split('Result:');   
+
+      var data = JSON.parse(splits[1]);
+
+      if(data!=null)  
+      {
+        console.log(data);
+
+        for(var i=0; i<data.length; i++)
+        {        
+          $("#UserData").css("font-size","1px");
+          $("#UserData").append('工號:'+data[i].employeeNo+'  ');
+          $("#UserData").append('姓名:'+urldecode(data[i].name)+' ');
+          $("#UserData").append('門代號:'+data[i].RightPlan[0].doorNo+' ');
+          $("#UserData").append('計畫代號:'+data[i].RightPlan[0].planTemplateNo+' ');
+          $("#UserData").append("<br><br>");
+        }
+
+        if(data.length!=0)
+          {
+            index+=10;
+            GetAllUser();
+          }
+      }
+      else
+      {
+        index = 0;
+        console.log('done')
+      }
+      $.unblockUI();
+    }
+  });
+}
+
+function CheckResponseStatus(Res)
+{
+  var Res1 = Res.split('\r\n');
+  //console.log(Res1);
+  var Res2 = Res1[0].split('Status:');
+  //console.log(Res2[1]);
+
+  if(Res2[1]=='True')
+    return true;
+  else
+    return false;
+}
+
+function Set_Timezone() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '12';
+
+  ShowBlockUI(10000);
+
+    $.ajax({
+      url: "/cgi-bin/Face/AddFaceCGI.cgi",
+      type: "POST",
+      data: JSON.stringify(Login),
+      dataType:'text', 
+      contentType: "application/json; charset=utf-8",
+
+      success: function(response) {
+        console.log(response);
+        if(CheckResponseStatus(response)!=true)
+        {
+          var ExceptMes = response.split('ExceptionMessange:');
+          alert(ExceptMes[1]);
+          $.unblockUI();
+          return;
+        }
+          //var res = response.split('\r\n');
+          //alert(res[1]); 
+          alert('傳送時區成功');   
+        $.unblockUI();
+      }
+    });
+}
+
+function GetTimezone() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '13';
+
+   ShowBlockUI(10000);
+
+    $.ajax({
+      url: "/cgi-bin/Face/AddFaceCGI.cgi",
+      type: "POST",
+      data: JSON.stringify(Login),
+      dataType:'text', 
+      contentType: "application/json; charset=utf-8",
+
+      success: function(response) {
+        //console.log(response);
+        if(CheckResponseStatus(response)!=true)
+        {
+          var ExceptMes = response.split('ExceptionMessange:');
+          alert(ExceptMes[1]);
+          $.unblockUI();
+          return;
+        }
+
+         var data = response.split('Result:');
+         var TimezoneData = JSON.parse(data[1]);
+         console.log(TimezoneData); 
+
+          if(TimezoneData.byEnable==1)
+          {
+            $("#TimezoneEnable").prop("checked", true);            
+          }
+          else
+          {
+            $("#TimezoneEnable").prop("checked", false);  
+          } 
+                   
+         for(var i=0; i<56; i++)
+         {
+           if(TimezoneData.struPlanCfg[i].byEnable==1)
+           {
+             $("#TimezoneSeg"+(i+1).toString()).prop("checked", true);            
+           }
+           else
+           {
+             $("#TimezoneSeg"+(i+1).toString()).prop("checked", false);  
+           }             
+
+           var StTime = padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struBeginTime.byHour.toString(),2);
+            StTime += ':';
+            StTime += padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struBeginTime.byMinute.toString(),2);   
+            StTime += ':';
+            StTime += padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struBeginTime.bySecond.toString(),2);   
+
+            var EdTime = padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struEndTime.byHour.toString(),2);
+            EdTime += ':';
+            EdTime += padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struEndTime.byMinute.toString(),2);   
+            EdTime += ':';
+            EdTime += padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struEndTime.bySecond.toString(),2);
+
+             $('#StTime'+(i+1).toString()).val(StTime);
+             $('#EdTime'+(i+1).toString()).val(EdTime);  
+
+         }       
+          alert('讀取時區成功'); 
+         $.unblockUI();
+      }
+    });
+}
+
+function SetUnlockTimezone() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '14';
+
+  ShowBlockUI(10000);
+
+    $.ajax({
+      url: "/cgi-bin/Face/AddFaceCGI.cgi",
+      type: "POST",
+      data: JSON.stringify(Login),
+      dataType:'text', 
+      contentType: "application/json; charset=utf-8",
+
+      success: function(response) {
+        //console.log(response);
+        if(CheckResponseStatus(response)!=true)
+        {
+          var ExceptMes = response.split('ExceptionMessange:');
+          alert(ExceptMes[1]);
+          $.unblockUI();
+          return;
+        }
+
+          //var res = response.split('\r\n');
+          //alert(res[1]); 
+          alert('傳送不上鎖時段成功');   
+        $.unblockUI();
+      }
+    });
+}
+
+function GetUnlockTimezone() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '15';
+
+   ShowBlockUI(10000);
+
+    $.ajax({
+      url: "/cgi-bin/Face/AddFaceCGI.cgi",
+      type: "POST",
+      data: JSON.stringify(Login),
+      dataType:'text', 
+      contentType: "application/json; charset=utf-8",
+
+      success: function(response) {
+        //console.log(response);
+        if(CheckResponseStatus(response)!=true)
+        {
+          var ExceptMes = response.split('ExceptionMessange:');
+          alert(ExceptMes[1]);
+          $.unblockUI();
+          return;
+        }
+
+         var data = response.split('Result:');
+         var TimezoneData = JSON.parse(data[1]);
+         console.log(TimezoneData); 
+
+          if(TimezoneData.byEnable==1)
+          {
+            $("#UnlockTimezoneEnable").prop("checked", true);            
+          }
+          else
+          {
+            $("#UnlockTimezoneEnable").prop("checked", false);  
+          } 
+                   
+         for(var i=0; i<56; i++)
+         {
+           if(TimezoneData.struPlanCfg[i].byEnable==1)
+           {
+             $("#UnlockTimezoneSeg"+(i+1).toString()).prop("checked", true);            
+           }
+           else
+           {
+             $("#UnlockTimezoneSeg"+(i+1).toString()).prop("checked", false);  
+           }             
+
+           var StTime = padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struBeginTime.byHour.toString(),2);
+            StTime += ':';
+            StTime += padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struBeginTime.byMinute.toString(),2);   
+            StTime += ':';
+            StTime += padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struBeginTime.bySecond.toString(),2);   
+
+            var EdTime = padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struEndTime.byHour.toString(),2);
+            EdTime += ':';
+            EdTime += padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struEndTime.byMinute.toString(),2);   
+            EdTime += ':';
+            EdTime += padLeft(TimezoneData.struPlanCfg[i].struTimeSegment.struEndTime.bySecond.toString(),2);
+
+             $('#UnlockStTime'+(i+1).toString()).val(StTime);
+             $('#UnlockEdTime'+(i+1).toString()).val(EdTime);  
+         }       
+          alert('讀取不上鎖時段成功'); 
+         $.unblockUI();
+      }
+    });
+}
+
+function SaveHoliday(id)
+{
+  HolidayGroup[id-1].HolidayEnable = $('#HolidayEnable').prop('checked');
+
+  HolidayGroup[id-1].HolidaySDate = $('#HolidaySDate').val();
+
+  HolidayGroup[id-1].HolidayEDate = $('#HolidayEDate').val();
+
+  for(var i=0; i<8; i++)
+  {
+    HolidayGroup[id-1].HolidaySegment[i].Enablechecked = $('#HolidaySegEnable'+(i+1).toString()).prop('checked');
+    HolidayGroup[id-1].HolidaySegment[i].HolidayStTime = $('#HolidayStTime'+(i+1).toString()).val();
+    HolidayGroup[id-1].HolidaySegment[i].HolidayEdTime = $('#HolidayEdTime'+(i+1).toString()).val();
+  } 
+  console.log(HolidayGroup);
+
+  close.onclick();
+}
+
+function Set_Holiday() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '16';
+
+  //Login.Holiday = HolidayGroup[index];
+
+  Login.Holidayindex = index+1;
+
+  if(index==0)
+  {
+    ShowBlockUI(50000);
+  }
+
+  for(var i=0; i<16;i++)
+  {
+    var HolidayTemp = [];
+    HolidayTemp = HolidayGroup[index];
+    Login.Holiday.push(HolidayTemp);
+    index++;
+  }
+  //console.log(Login);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        $.unblockUI();
+        index = 0; 
+        return;
+      }
+        //var res = response.split('\r\n');
+        //alert(res[1]);
+
+        if(index<64) //256
+        {
+          Set_Holiday();         
+        }
+        else
+        {
+          alert('傳送例假日成功');  
+          index = 0; 
+          $.unblockUI();
+        }              
+    }
+  });
+}
+
+function Get_Holiday() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '17';
+
+  Login.Holidayindex = index+1;
+
+  if(index==0)
+  {
+    ShowBlockUI(50000);
+  }
+
+  for(var i=0; i<16;i++)
+  {
+    var HolidayTemp = [];
+    HolidayTemp = HolidayGroup[index];
+    Login.Holiday.push(HolidayTemp);
+    index++;
+  }
+  //console.log(Login);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        $.unblockUI();
+        index = 0; 
+        return;
+      }
+        var data = response.split('Result:');
+        var HolidayData = JSON.parse(data[1]);
+        console.log(HolidayData); 
+        
+        var id = (index-16);
+
+        for(var i=0; i<16; i++)
+         {
+          if(HolidayData[i].byEnable==1)
+          {
+            HolidayGroup[id+i].HolidayEnable = true;
+          }
+          else
+          {
+            HolidayGroup[id+i].HolidayEnable = false;
+          }
+          HolidayGroup[id+i].HolidaySDate = HolidayData[i].struBeginDate.wYear+"-"+padLeft(HolidayData[i].struBeginDate.byMonth,2)+"-"+padLeft(HolidayData[i].struBeginDate.byDay,2);
+
+          HolidayGroup[id+i].HolidayEDate = HolidayData[i].struEndDate.wYear+"-"+padLeft(HolidayData[i].struEndDate.byMonth,2)+"-"+padLeft(HolidayData[i].struEndDate.byDay,2);
+
+          for(var j=0; j<8; j++)
+          {
+            if(HolidayData[i].struPlanCfg[j].byEnable==1)
+            {
+              HolidayGroup[id+i].HolidaySegment[j].Enablechecked = true;
+            }
+            else
+            {
+              HolidayGroup[id+i].HolidaySegment[j].Enablechecked = false;
+            }
+       
+            HolidayGroup[id+i].HolidaySegment[j].HolidayStTime =  padLeft(HolidayData[i].struPlanCfg[j].struTimeSegment.struBeginTime.byHour,2) +":"+
+            padLeft(HolidayData[i].struPlanCfg[j].struTimeSegment.struBeginTime.byMinute,2) +":"+
+            padLeft(HolidayData[i].struPlanCfg[j].struTimeSegment.struBeginTime.bySecond,2);
+
+            HolidayGroup[id+i].HolidaySegment[j].HolidayEdTime =  padLeft(HolidayData[i].struPlanCfg[j].struTimeSegment.struEndTime.byHour,2) +":"+
+            padLeft(HolidayData[i].struPlanCfg[j].struTimeSegment.struEndTime.byMinute,2) +":"+
+            padLeft(HolidayData[i].struPlanCfg[j].struTimeSegment.struEndTime.bySecond,2);              
+          }
+        }
+
+        //console.log(HolidayData);
+
+        if(index<64)
+        {
+          Get_Holiday();        
+        }
+        else
+        {
+          alert('讀取例假日成功');  
+          index = 0; 
+          $.unblockUI();
+        }              
+    }
+  });
+}
+
+function SendCurrentTime() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '18';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      //console.log(response);
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        alert('傳送時間失敗');
+        $.unblockUI();
+        return;
+      }
+       alert('傳送時間成功');   
+       $.unblockUI();
+    }
+  });
+}
+
+function ReadCurrentTime() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '19';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        alert('讀取時間失敗');
+        $.unblockUI();
+        return;
+      }
+      var data = response.split('Result:');
+      var TimeData = data[1];
+      alert("讀取時間成功:\r\n\r\n"+TimeData); 
+      $.unblockUI();
+    }
+  });
+}
+
+//小端模式
+function BytesToIntLittleEndian(bytes){
+    var val = 0;
+    for (var i = bytes.length - 1; i >= 0; i--) {        
+        val += bytes[i];    
+        if (i != 0) {
+            val = val << 8;
+        }    
+    }
+    return val;
+}
+
+// //小端模式
+// //number 要转换的整形数值
+// //length 要转成什么byte数组，规定数组的长度
+// //如uint16，则lenght=2表示两个字节，转成的byte数组长度是length=2
+// //如uint32，则lenght=2表示两个字节，转成的byte数组长度是length=4
+function IntToBytesLittleEndian(number, length){
+    var bytes = [];
+    var i = 0;
+    do {
+    bytes[i++] = number & (255);
+    number = number>>8;
+    } while ( i < length )
+    return bytes;
+}
+
+// //大端模式
+// function BytesToIntBigEndian(bytes){
+//     var val = 0;
+//     for (var i = 0; i < bytes.length; ++i) {        
+//         val += bytes[i];        
+//         if (i < bytes.length-1) {
+//             val = val << 8;
+//         }
+//     }
+//     return val;
+// }
+
+// //大端模式
+// //number 要转换的整形数值
+// //length 要转成什么byte数组，规定数组的长度
+// //如uint16，则lenght=2表示两个字节，转成的byte数组长度是length=2
+// //如uint32，则lenght=2表示两个字节，转成的byte数组长度是length=4
+// function IntToBytesBigEndian(number, length){
+//     var bytes = [];
+//     var i = length;
+//     do {
+//     bytes[--i] = number & (255);
+//     number = number>>8;
+//     } while (i)
+//     return bytes;
+// }
+
+
+// //测试小端模式
+// i = 65537
+// bs = IntToBytesLittleEndian(i, 4)
+// console.log(bs)
+// console.log(BytesToIntLittleEndian(bs))
+
+// //测试大端模式
+// bs = IntToBytesBigEndian(i, 2)
+// console.log(bs)
+// console.log(BytesToIntBigEndian(bs))
+
+function ReadMachineInfo() {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '20';
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        alert('讀取機器資訊失敗');
+        $.unblockUI();
+        return;
+      }
+      var splits = response.split('Result:'); 
+      var MachineInfotData = JSON.parse(splits[1]);
+      //console.log(MachineInfotData);
+    
+      var DevTypeName = atob(MachineInfotData.byDevTypeName).replace(/[^A-Za-z 0-9 \.,\?""!@#\$%\^&\*\(\)-_=\+;:<>\/\\\|\}\{\[\]`~]*/g, '');
+      var DVRName = atob(MachineInfotData.sDVRName).replace(/[^A-Za-z 0-9 \.,\?""!@#\$%\^&\*\(\)-_=\+;:<>\/\\\|\}\{\[\]`~]*/g, '');
+      var SerialNumber = atob(MachineInfotData.sSerialNumber).replace(/[^A-Za-z 0-9 \.,\?""!@#\$%\^&\*\(\)-_=\+;:<>\/\\\|\}\{\[\]`~]*/g, '');
+      var SoftwareV1 = IntToBytesLittleEndian((MachineInfotData.dwSoftwareVersion>>24),1).toString(16);
+      var SoftwareV2 = IntToBytesLittleEndian((MachineInfotData.dwSoftwareVersion>>16),1).toString(16);
+      var SoftwareV3 = IntToBytesLittleEndian((MachineInfotData.dwSoftwareVersion>>0),1).toString(16);
+
+
+      var SoftwareBuildDate1 = IntToBytesLittleEndian((MachineInfotData.dwSoftwareBuildDate>>16),1).toString(16);
+      var SoftwareBuildDate2 = IntToBytesLittleEndian((MachineInfotData.dwSoftwareBuildDate>>8),1).toString(16);
+      var SoftwareBuildDate3 = IntToBytesLittleEndian((MachineInfotData.dwSoftwareBuildDate>>0),1).toString(16);
+  
+      // console.log(DevTypeName);  
+      // console.log(DVRName); 
+      // console.log(SerialNumber); 
+      // console.log(SoftwareV1+'.'+SoftwareV2+'.'+SoftwareV3); 
+      // console.log(SoftwareBuildDate1+'.'+SoftwareBuildDate2+'.'+SoftwareBuildDate3);
+
+      alert("讀取機器資訊成功:\r\n\r\n"+"機器型號: "+DevTypeName+"\r\n"+"機器名稱: "+DVRName+"\r\n"+"機器序號: "+SerialNumber+"\r\n"+"韌體版本: "+SoftwareV1+'.'+SoftwareV2+'.'+SoftwareV3+"\r\n"+"編譯日期: "+SoftwareBuildDate1+'.'+SoftwareBuildDate2+'.'+SoftwareBuildDate3); 
+      $.unblockUI();
+    }
+  });
+}
+
+function Doorcontrol(action) {
+
+  var Login;
+
+  Login = GetUserParamter();
+
+  Login.cmd = '21';
+
+  Login.DoorControlType = action;
+
+  //console.log(Login);
+
+  ShowBlockUI(10000);
+
+  $.ajax({
+    url: "/cgi-bin/Face/AddFaceCGI.cgi",
+    type: "POST",
+    data: JSON.stringify(Login),
+    dataType:'text', 
+    contentType: "application/json; charset=utf-8",
+
+    success: function(response) {
+      if(CheckResponseStatus(response)!=true)
+      {
+        var ExceptMes = response.split('ExceptionMessange:');
+        alert(ExceptMes[1]);
+        alert('操作失敗');
+        $.unblockUI();
+        return;
+      }
+      //console.log(response);
+      //var data = response.split('Result:');
+      //var TimeData = data[1];
+      alert("操作成功"); 
+      $.unblockUI();
+    }
+  });
+}
+
+
+var div = document.getElementById('background-pop');
+var close = document.getElementById('close-button');
+
+function show(id) {
+          div.style.display = "block";
+          console.log('id:'+id);
+          var group = 0;
+          var segment = 0;
+          group = Math.floor(id/16)+1;
+          if(group==17)
+          {
+            group = 16;            
+          }
+          segment = id%16;
+          if(segment==0)
+          {
+            segment = 16;
+          }
+
+          $('#HolidaySegment').text("組別"+group+"-"+segment);
+
+          var Html = "";
+          Html += "<div style='padding:10px'>";
+
+          Html += "<table border='2'>";
+          Html += "<tr>";
+          Html += "<td>";
+          Html += "<div>";
+          Html += "<input type=checkbox id=HolidayEnable name=HolidayEnable checked />";
+          Html += "<label for=HolidayEnable style=font-size:20px>"+TL.lng_HolidayEnable+"</label>";
+          Html += "</div>";
+          Html += "</td>";
+          Html += "</tr>";
+          Html += "</table>";
+
+          Html += "<span>"+TL.lng_Start_Date;
+          Html += "</span>";
+          Html += "<input class=\"history_input_date\" id=\"HolidaySDate\" />";
+          Html += "<br/>";
+          Html += "<span>"+TL.lng_End_Date;
+          Html += "</span>";
+          Html += "<input class=\"history_input_date\" id=\"HolidayEDate\" />";
+
+          Html += "<table border='2'>";
+
+          Html += "<tr>";
+          Html += "<td>";
+          Html += TL.lng_Holiday_PassTime;
+          Html += "</td>"
+          Html += "</tr>";
+
+          for(var i=1; i<9;i++)
+          {
+            Html += "<tr>";
+            Html += "<td>";
+            Html += "<div>";
+            Html += "<input type=checkbox id=HolidaySegEnable"+i.toString()+" name=HolidaySegEnable"+i.toString()+" checked />";
+            Html += "<label for=HolidaySeg"+i.toString()+" style=font-size:18px>"+TL.lng_Holiday_Time+i.toString()+"</label>";
+            Html += "</div>";
+            Html += "</td>";
+
+            Html += "<td>";
+            Html += "<font size=4>"+TL.lng_Start_Time+"</font>";
+            Html += "</td>";
+
+            Html += "<td>";
+            Html += "<input class=\"Holiday_input_time\" id=\"HolidayStTime"+i.toString()+"\"/>";
+            Html += "</td>";
+            
+            Html += "<td>";
+            Html += "<font size=4>"+TL.lng_End_Time+"</font>";
+            Html += "</td>";
+
+            Html += "<td>";
+            Html += "<input class=\"Holiday_input_time\" id=\"HolidayEdTime"+i.toString()+"\"/>";
+            Html += "</td>";
+
+            Html += "</tr>";
+          }
+          Html += "<tr>";
+          Html += "<td>";
+          Html += "<span class='User_Edit_Button' onclick='SaveHoliday("+id+");' >"+ TL.lng_Save_Btn +"</span>"; 
+          Html += "</td>";
+          Html += "</tr>";
+          Html += "</table>";         
+
+          Html += "</div>";
+
+          $('#div-content').html(Html);
+        
+          // var today = new Date();
+          // var today_year = today.getFullYear();
+          // var today_month = today.getMonth() + 1;
+          // var today_date = today.getDate();
+
+          // $('#HolidaySDate').val(padLeft(today_year,4) + "-" +padLeft(today_month,2) + "-" + padLeft(today_date,2));
+
+          // $('#HolidayEDate').val(padLeft(today_year,4) + "-" +padLeft(today_month,2) + "-" + padLeft(today_date,2));
+
+          if(HolidayGroup[id-1].HolidayEnable==true)
+          {
+            $("#HolidayEnable").prop("checked", true);            
+          }
+          else
+          {
+            $("#HolidayEnable").prop("checked", false);  
+          } 
+         $('#HolidaySDate').val(HolidayGroup[id-1].HolidaySDate);
+         $('#HolidayEDate').val(HolidayGroup[id-1].HolidayEDate);
+
+          for(var i=1; i<9; i++)
+          {
+            if(HolidayGroup[id-1].HolidaySegment[i-1].Enablechecked==true)
+            {
+              $("#HolidaySegEnable"+i.toString()).prop("checked", true);            
+            }
+            else
+            {
+              $("#HolidaySegEnable"+i.toString()).prop("checked", false);
+            }
+
+            $('#HolidayStTime'+i.toString()).val(HolidayGroup[id-1].HolidaySegment[i-1].HolidayStTime);
+            $('#HolidayEdTime'+i.toString()).val(HolidayGroup[id-1].HolidaySegment[i-1].HolidayEdTime);
+          }         
+      }
+
+close.onclick = function close() {
+
+          div.style.display = "none";
+      }
+
+window.onclick = function close(e) {
+          if (e.target == div) {
+              div.style.display = "none";
+          }
+      }
+
+HolidayParameterInit();
+
+</script>
+
+</HTML>
+
