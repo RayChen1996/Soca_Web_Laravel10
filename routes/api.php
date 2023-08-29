@@ -183,6 +183,7 @@ Route::get('GroupsPersonal/{pg}', 'App\Http\Controllers\GroupController@Personal
 Route::get('GroupsReaderSet/{id}/{pg}', 'App\Http\Controllers\GroupController@GroupReaderSet');
 //DB_Group_UserList.php
 Route::get('GroupsUserList/{id}/{pg}', 'App\Http\Controllers\GroupController@GroupUserList');
+Route::get('GroupsUserListCount/{id}', 'App\Http\Controllers\GroupController@GroupUserCount');
 Route::get('GetReaderFromGIdx/{id}', 'App\Http\Controllers\UsersController@GetCardListFromGIdx');
 
 
@@ -298,5 +299,12 @@ Route::get('SysPolling', 'App\Http\Controllers\SysParamController@PollingStatus'
 Route::get('SysPolling/{val}', 'App\Http\Controllers\SysParamController@SetPollingStatus');
  
 
-
+// 語言檔 API 路由
+Route::prefix('/language')->group(function () {
+    // 獲取語言檔
+    Route::get('/{locale}', 'App\Http\Controllers\LanguageController@getLanguageFile');
+    
+    // 更新語言檔
+    Route::put('/{locale}', 'App\Http\Controllers\LanguageController@updateLanguageFile');
+});
 

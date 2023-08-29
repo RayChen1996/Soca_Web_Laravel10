@@ -70,7 +70,29 @@ class GroupController extends Controller
 
 
 
+    public function GroupUserCount($id)
+    {
 
+
+      
+      
+
+        $sql = "SELECT  count(c.C_CARD)   ";
+       
+ 
+        $sql.= " FROM LIMIT l";
+        $sql.= " inner join CARDS c on l.C_IDX = c.C_IDX";
+        $sql.= " left join USERS u on u.U_IDX = c.U_IDX";
+        $sql.= " where l.G_IDX = ".$id;
+         
+
+
+        $Group = DB::select($sql);
+    
+    
+    
+        return response()->json($Group);
+    }
 
 
 

@@ -21,8 +21,8 @@ class ReaderController extends Controller
         $sql = "SELECT FIRST 10";
         if ($skip > 0) {
           $sql.= " skip ".$skip;  
-        }  
-        $sql.= '  a.R_IDX, m.M_NAME ,a.R_NO ,a.R_MODEL,a.R_NAME,a.R_INTERFACE,a.R_TIMEOUT,a.POLLING,a.R_READ_IDX, a.CREATETIME, a.EDITTIME  ';
+        }
+        $sql.= '  a.R_IDX,  m.M_TYPE , a.R_NO ,a.R_MODEL,a.R_NAME,a.R_INTERFACE,a.R_TIMEOUT,a.POLLING,a.R_READ_IDX, a.CREATETIME, a.EDITTIME  ';
         $sql.= "  FROM READER a";
         $sql.="    left join MODEL m on m.M_TYPE = a.R_MODEL";
         $readers = DB::select($sql);
