@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
-
+use App\Http\Controllers\UsersController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -156,24 +156,38 @@ Route::delete('AutoConvertSetting/{W_IDX}', 'App\Http\Controllers\WorkTimeContro
 
 
 
+Route::prefix('Users')->group(function () {
+    Route::get('/{pg}', [UsersController::class, 'index']); // 取得所有使用者
+    Route::get('/{id}', [UsersController::class, 'show']); // 取得特定使用者
+    Route::post('/', [UsersController::class, 'store']); // 創建使用者
+    Route::put('/{id}', [UsersController::class, 'update']); // 更新使用者
+    Route::delete('/{id}', [UsersController::class, 'destroy']); // 刪除使用者
+});
+
+// Route::get('Users/{pg}', 'App\Http\Controllers\UsersController@index');
+
+// Route::get('Users/Next/{id}', 'App\Http\Controllers\UsersController@index');
+// Route::get('Users/Previous/{id}', 'App\Http\Controllers\UsersController@index');
 
 
-Route::get('Users/{pg}', 'App\Http\Controllers\UsersController@index');
-
-Route::get('Users/Next/{id}', 'App\Http\Controllers\UsersController@index');
-Route::get('Users/Previous/{id}', 'App\Http\Controllers\UsersController@index');
-
-
-Route::put('Users/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
-Route::delete('Users/{id}', 'App\Http\Controllers\UsersController@destroy');
-Route::post('Users', 'App\Http\Controllers\UsersController@create');
+// Route::put('Users/{id}', 'App\Http\Controllers\WorkTimeController@store');
+// Route::delete('Users/{id}', 'App\Http\Controllers\UsersController@destroy');
+// Route::post('Users', 'App\Http\Controllers\UsersController@create');
+//   Route::put('Users/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
+// Route::delete('Users/{id}', 'App\Http\Controllers\UsersController@destroy');
+// Route::post('Users', 'App\Http\Controllers\UsersController@create');
   
+
+
+
+
+
+
 
 Route::get('Groups/{pg}', 'App\Http\Controllers\GroupController@index');
-Route::put('Users/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
-Route::delete('Users/{id}', 'App\Http\Controllers\UsersController@destroy');
-Route::post('Users', 'App\Http\Controllers\UsersController@create');
-  
+Route::get('GroupsCount', 'App\Http\Controllers\GroupController@GetCount');
+
+
 
 
 
@@ -200,6 +214,8 @@ Route::get('Map/{id}', 'App\Http\Controllers\AutoRecvController@index');
 
 Route::get('Readers/{pg}', 'App\Http\Controllers\ReaderController@index');
 // Route::get('Readers/{id}', 'App\Http\Controllers\ReaderController@show');
+Route::put('Readers/toggle', 'App\Http\Controllers\ReaderController@UpdatePollingStatus');
+
 Route::delete('Readers/{id}', 'App\Http\Controllers\ReaderController@destroy');
 
 Route::post('Readers', 'App\Http\Controllers\ReaderController@create');

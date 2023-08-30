@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; // 导入 DB 类
+use App\Models\Reader;
 
 class ReaderController extends Controller
 {
@@ -92,7 +93,29 @@ class ReaderController extends Controller
         }
     }
 
+    public function UpdatePollingStatus(Request $request)
+    {
+        $requestData = $request->all();
+        $readerIdx = intval($requestData['R_IDX']);
+        $newPollingValue = intval($requestData['new_polling_value']); // 假設新的 POLLING 數值在請求數據中
 
+        $reader = Reader::find($readerIdx);
+        // return json_encode($insertData);
+        if (!$reader) {
+            return response()->json(['message' => 'Reader not found'], 404);
+        }
+        if($newPollingValue==0){
+            $newPollingValue = 1;
+        }else{
+            $newPollingValue = 0;
+        }
+    
+        $reader->POLLING = $newPollingValue;
+        $reader->save();
+
+        return response()->json(['message' => 'POLLING value updated successfully']);
+    
+    }
 
 
     public function ReaderParam($id)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Users;
 use Illuminate\Support\Facades\DB; // 导入 DB 类
+
 class UsersController extends Controller
 {
     /**
@@ -12,29 +13,69 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($pg)
-    { 
-        $page = $pg;
-        //處理頁數
-        if ($page <= 0 ) {$page = 1;}
+    // public function index($pg)
+    // { 
+    //     $page = $pg;
+    //     //處理頁數
+    //     if ($page <= 0 ) {$page = 1;}
       
-        $OnePage = 100;
-        $skip = $OnePage * ($page-1);
+    //     $OnePage = 100;
+    //     $skip = $OnePage * ($page-1);
       
-        $sql = "SELECT FIRST 100";
-        if ($skip > 0) {
-          $sql.= " skip ".$skip;  
-        }  
-        $sql.="  * FROM USERS  ORDER BY U_IDX DESC ";
+    //     $sql = "SELECT FIRST 100";
+    //     if ($skip > 0) {
+    //       $sql.= " skip ".$skip;  
+    //     }  
+    //     $sql.="  * FROM USERS  ORDER BY U_IDX DESC ";
 
-        $Group = DB::select( $sql );
-        return response()->json($Group);
-    }
+    //     $Group = DB::select( $sql );
+    //     return response()->json($Group);
+    // }
 
-    public function AllList()
+  
+
+
+    public function index()
     {
-        
+        $users = Users::paginate(100);
+        return response()->json([
+            'data' => $users->items(), // 實際資料項目
+            'current_page' => $users->currentPage(), // 當前頁數
+            'per_page' => $users->perPage(), // 每頁顯示筆數
+            'total' => $users->total(), // 總資料筆數
+        ]);
+        // return response()->json($users);
     }
+
+    public function show($id)
+    {
+        $user = Users::findOrFail($id);
+        return response()->json($user);
+    }
+
+    public function store(Request $request)
+    {
+        // 根據請求中的資料建立新使用者
+        // 回傳表示成功或失敗的 JSON 響應
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        // 根據請求中的資料更新使用者
+        // 回傳表示成功或失敗的 JSON 響應
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        // 回傳表示成功或失敗的 JSON 響應
+    }
+
+
+
+
     public function GetCardListFromGIdx($id){
        
   
@@ -98,22 +139,7 @@ class UsersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
+    
     /**
      * Show the form for editing the specified resource.
      *
@@ -125,31 +151,9 @@ class UsersController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+ 
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-        $sql = "DELETE  FROM USERS where U_IDX =  ".$id;
-        
-        DB::delete($sql);
-        return "delete ".$id;
-    }
+   
+  
 
 }
