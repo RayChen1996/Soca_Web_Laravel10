@@ -10,7 +10,7 @@
     <script src="{{ asset('js/swagger-ui-bundle.js') }}"></script>
     <script>
         const ui = SwaggerUIBundle({
-            url: "/api-docs.json", // 或者是您的Swagger规范文件的URL
+            url: "/api-docs/api-docs.json", // 或者是您的Swagger规范文件的URL
             dom_id: "#swagger-ui",
         });
     </script>

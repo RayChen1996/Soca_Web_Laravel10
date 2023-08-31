@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+/**
+ 
+ * @OA\Tag(name="請假單")
+ */
 class AbsenceController extends Controller
 {
     /**

@@ -7,13 +7,31 @@ use App\Models\Dep;
 use Illuminate\Support\Facades\DB; // 导入 DB 类
 
 
-
+/**
+ 
+ * @OA\Tag(name="部門")
+ */
 class DepController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     */
+        /**
+ * @OA\Get(
+ *     path="/api/Deps/{pg}",
+ *     summary="Get Deps data",
+ *  @OA\Parameter(
+ *         name="pg",
+ *         in="path",
+ *         required=true,
+ *         description="Page number for pagination",
+ *         @OA\Schema(type="integer")
+ *     ),
+     *     @OA\Response(response="200", description="List of 部門"),
+     *     tags={"部門"}
+     * )
      */
     public function index($pg)
     {
@@ -33,11 +51,7 @@ class DepController extends Controller
         return response()->json($Dep);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Responses
-     */
+    
     public function create()
     {
         //

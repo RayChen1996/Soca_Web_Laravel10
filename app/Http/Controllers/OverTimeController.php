@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+/**
+ 
+ * @OA\Tag(name="加班單")
+ */
 class OverTimeController extends Controller
 {
     /**

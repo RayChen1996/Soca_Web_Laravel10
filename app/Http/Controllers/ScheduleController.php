@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ 
+ * @OA\Tag(name="Schedule")
+ */
 class ScheduleController extends Controller
 {
     /**

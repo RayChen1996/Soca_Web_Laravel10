@@ -9,7 +9,7 @@ use App\Models\History;
 
 /**
  * @OA\Info(
- *     title="soca laravel web api v1.0",
+ *     title="soca web api v1.0",
  *     version="1.0",
  *     description="soca web API Description"
  * )
@@ -17,7 +17,6 @@ use App\Models\History;
  */
 class HistoryController extends Controller
 {
-
     /**
  * @OA\Get(
  *   path="/api/history/{pg}",
@@ -29,31 +28,12 @@ class HistoryController extends Controller
  *         description="Page number for pagination",
  *         @OA\Schema(type="integer")
  *     ),
- *     @OA\Response(response="200", description="List of history")
+ *     @OA\Response(response="200", description="List of history"),
+ *     tags={"History"}
  * )
- 
  */
-
- 
     public function index($pg){
 
-        // $sql = "";
-        // $page = $pg;
-        // //處理頁數
-        // if ($page <= 0 ) {$page = 1;}
-      
-        // $OnePage = 100;
-        // $skip = $OnePage * ($page-1);
-      
-        // $sql = "SELECT FIRST 100";
-        // if ($skip > 0) {
-        //   $sql.= " skip ".$skip;  
-        // }  
-        // $sql.="  H_IDX, H_CARD, H_DATE, H_TIME, H_DATETIME, H_STATE, H_RECVDATETIME, H_SUBREADER, H_SUBREADERNO, R_IDX, H_READERMODEL    FROM HISTORYS      ";
-        // $sql.=" ORDER BY H_IDX desc ";
-        // $history = DB::select($sql);
-  
-        // return response()->json($history);
 
         $page = $pg;
 
@@ -79,17 +59,16 @@ class HistoryController extends Controller
             ->get();
 
         return response()->json($history);
-
-
     }
 
 
 
-        /**
+    /**
  * @OA\Get(
  *     path="/api/history/GetConvFormat",
  *     summary="Get Convert Format",
- *     @OA\Response(response="200", description="List of history")
+ *     @OA\Response(response="200", description="List of history"),
+ *     tags={"History"}
  * )
  
  */
@@ -113,12 +92,16 @@ class HistoryController extends Controller
     }
 
 
-
+        /**
+ * @OA\Get(
+ *     path="/api/AutoConvertSetting/{pg}",
+ *     summary="Get Convert Format",
+ *     @OA\Response(response="200", description="List of history"),
+ *     tags={"History"}
+ * )
+ */
     public function GetAutoConvSetting($pg){
 
-       
-   
-      
         $sql = "SELECT  a.IDX,  a.READERLIST, a.SETTING, a.LASTUPDATE_DATETIME, a.LASTCONVERT_HISTORYIDX  ";
       
         $sql.="  FROM AUTOCONVERSETTING a      ";
@@ -130,7 +113,14 @@ class HistoryController extends Controller
 
     
 
-
+         /**
+ * @OA\Get(
+ *     path="/api/history/show/{pg}",
+ *     summary="Get Convert Format",
+ *     @OA\Response(response="200", description="List of history"),
+ *     tags={"History"}
+ * )
+ */
     public function show($id)
     {
         $history = History::find($id);
@@ -143,9 +133,7 @@ class HistoryController extends Controller
 
 
 
-    /***
-     * 報表類
-     */
+ 
     public function showSimpleAttendReport($id)
     {
         $history = History::find($id);
@@ -158,6 +146,15 @@ class HistoryController extends Controller
 
     }
 
+
+/**
+ * @OA\Get(
+ *     path="/api/NoRegCard/{pg}",
+ *     summary="Get No Reg Card report",
+ *     @OA\Response(response="200", description="List of history"),
+ *     tags={"History"}
+ * )
+ */
     public function showNoRegCardReport($id)
     {
         $history = History::find($id);
@@ -166,8 +163,6 @@ class HistoryController extends Controller
         } else {
             return response()->json(['error' => 'Record not found'], 404);
         }
-
-        
     }
 
 
@@ -179,13 +174,8 @@ class HistoryController extends Controller
         } else {
             return response()->json(['error' => 'Record not found'], 404);
         }
-
-        
     }
 
-
-
-    
     public function showInOutReport($id)
     {
         $history = History::find($id);
@@ -276,6 +266,67 @@ class HistoryController extends Controller
         $history = DB::select($sql); 
         return response()->json($history);
     }
+
+
+
+             /**
+     * @OA\Post(
+     *     path="/api/history/",
+     *     summary="Create History data",
+  *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="R_NO", type="integer", description="Reader number"),
+ *             @OA\Property(property="R_MODEL", type="integer", description="Reader model"),
+ *             @OA\Property(property="R_NAME", type="string", description="Reader name"),
+ *             @OA\Property(property="R_INTERFACE", type="string", description="Reader interface"),
+ *             @OA\Property(property="R_TIMEOUT", type="integer", description="Reader timeout"),
+ *             @OA\Property(property="R_MAP_IDX", type="integer", description="Reader map index"),
+ *             @OA\Property(property="R_READ_POINTER3", type="integer", description="Reader read pointer 3"),
+ *             @OA\Property(property="R_READ_POINTER4", type="integer", description="Reader read pointer 4"),
+ *             @OA\Property(property="POLLING", type="integer", description="Polling value"),
+ *             @OA\Property(property="CREATETIME", type="string", format="date-time", description="Creation time"),
+ *         )
+ *     ),
+     *     @OA\Response(response="200", description="Delete historys Id"),
+     *     @OA\Response(response="500", description="Failed to create historys"),
+     *     tags={"History"}
+     * )
+     */
+    public function create(Request $request)
+    {
+        $requestData = $request->all();
+        $insertData = [
+            'U_NAME' => $requestData['UName'],
+        ];
+
+        // 执行插入操作
+        $inserted = DB::table('USERS')->insert($insertData);
+
+
+        $lastUserIdx = History::orderBy('U_IDX', 'desc')->value('U_IDX');
+
+
+
+
+        $insertData = [
+            'C_CARD' => $requestData['Card'],
+            'U_IDX' =>  $lastUserIdx,
+            'C_PW'=> 0
+        ];
+
+        // 执行插入操作
+        $inserted = DB::table('CARDS')->insert($insertData);
+
+
+        if ($inserted) {
+            return response()->json(['message' => 'Reader created successfully']);
+        } else {
+            return response()->json(['message' => 'Failed to New User'], 200);
+        }
+    }
+
 
 
 }

@@ -6,6 +6,12 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Session;
+
+
+/**
+ 
+ * @OA\Tag(name="Login")
+ */
 class UAController extends Controller
 {
     /**

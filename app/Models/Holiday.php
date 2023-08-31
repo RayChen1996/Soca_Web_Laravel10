@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Holiday extends Model
 {
     use HasFactory;
+
+    protected $table = 'HOLIDAY';
+    protected $primaryKey = null; // 主鍵名稱
+    public $timestamps = false; // 不使用 Eloquent 的預設時間戳記
+
+
+
 }

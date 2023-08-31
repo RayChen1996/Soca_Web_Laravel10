@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; // 导入 DB 类
 use App\Models\Group;
 
+/**
+ 
+ * @OA\Tag(name="Group")
+ */
 class GroupController extends Controller
 {
     /**

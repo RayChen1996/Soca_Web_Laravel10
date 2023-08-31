@@ -4,6 +4,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\ReaderController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\OverTimeController;
+use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AttendController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\WorkTimeController;
+use App\Http\Controllers\SysParamController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,73 +29,69 @@ use App\Http\Controllers\UsersController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 
 Route::get('/api-docs', 'App\Http\Controllers\SwaggerController@index');
 
+Route::prefix('history')->group(function () {
+    Route::get('/{pg}', [HistoryController::class, 'index']); // 取得所有使用者
+    Route::get('/show/{id}', [HistoryController::class, 'show']); // 取得特定使用者
+  
+    Route::get('/simpleAttend/{pg}', 'App\Http\Controllers\HistoryController@showSimpleAttendReport');
+    Route::get('/CardTimesUse/{pg}', 'App\Http\Controllers\HistoryController@showCardTimesUseReport');
+    Route::get('/InOutReport/{pg}', 'App\Http\Controllers\HistoryController@showInOutReport');
+    Route::get('/NoDoorClose/{pg}', 'App\Http\Controllers\HistoryController@showNoDoorCloseReport');
+    Route::get('/PatralReport/{pg}', 'App\Http\Controllers\HistoryController@showPatralReportReport');
+    Route::get('/NoLeaveMemberReport/{pg}', 'App\Http\Controllers\HistoryController@showNoLeaveMemberReportReport');
+    
+     
+    Route::get('/RealMonitorShow/{id}', 'App\Http\Controllers\HistoryController@RealMonitorShow');
 
 
-Route::get('history/{pg}', 'App\Http\Controllers\HistoryController@index');
-
-Route::get('NoRegCard/{pg}', 'App\Http\Controllers\HistoryController@showNoRegCardReport');
-Route::get('simpleAttend/{pg}', 'App\Http\Controllers\HistoryController@showSimpleAttendReport');
-Route::get('CardTimesUse/{pg}', 'App\Http\Controllers\HistoryController@showCardTimesUseReport');
-Route::get('InOutReport/{pg}', 'App\Http\Controllers\HistoryController@showInOutReport');
-Route::get('NoDoorClose/{pg}', 'App\Http\Controllers\HistoryController@showNoDoorCloseReport');
-Route::get('PatralReport/{pg}', 'App\Http\Controllers\HistoryController@showPatralReportReport');
-Route::get('NoLeaveMemberReport/{pg}', 'App\Http\Controllers\HistoryController@showNoLeaveMemberReportReport');
-
+    Route::get('/NoRegCard/{pg}', 'App\Http\Controllers\HistoryController@showNoRegCardReport');
+  
+  
+    Route::post('/', [HistoryController::class, 'create']); // 創建 
+    Route::put('/{id}', [HistoryController::class, 'update']); // 更新 
+    Route::delete('/', [HistoryController::class, 'destroy']); // 刪除 
+});
  
 
 
-
-Route::get('RealMonitorShow/{id}', 'App\Http\Controllers\HistoryController@RealMonitorShow');
-
-
-
-
-Route::get('Deps/{pg}', 'App\Http\Controllers\DepController@index');
-Route::get('Deps/{D_DEPNO}', 'App\Http\Controllers\DepController@show');
-Route::put('Deps/{D_DEPNO}', 'App\Http\Controllers\DepController@store');
-Route::post('Deps', 'App\Http\Controllers\DepController@create');
-Route::delete('Deps/{D_DEPNO}', 'App\Http\Controllers\DepController@destroy');
+Route::prefix('Deps')->group(function () {
+    Route::get('/{pg}', [DepController::class, 'index']); // 取得所有使用者
+ 
+    Route::post('/', [DepController::class, 'store']); // 創建使用者
+    Route::put('/{id}', [DepController::class, 'update']); // 更新使用者
+    Route::delete('/{id}', [DepController::class, 'destroy']); // 刪除使用者
+});
 
 
+Route::prefix('WorkTime')->group(function () {
+    Route::get('/{pg}', [WorkTimeController::class, 'index']); // 取得所有使用者
+    Route::get('/{id}', [WorkTimeController::class, 'show']); // 取得特定使用者
+    Route::post('/', [WorkTimeController::class, 'store']); // 創建使用者
+    Route::put('/{id}', [WorkTimeController::class, 'update']); // 更新使用者
+    Route::delete('/{id}', [WorkTimeController::class, 'destroy']); // 刪除使用者
+});
+ 
 
-
-
-Route::get('WorkTime', 'App\Http\Controllers\WorkTimeController@index');
-Route::get('WorkTime/{W_IDX}', 'App\Http\Controllers\WorkTimeController@show');
-Route::put('WorkTime/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
-Route::post('WorkTime', 'App\Http\Controllers\WorkTimeController@create');
-Route::delete('WorkTime/{W_IDX}', 'App\Http\Controllers\WorkTimeController@destroy');
-
-
-
-
-
-
-
-
-
-Route::get('Holiday', 'App\Http\Controllers\DepController@index');
-Route::get('Holiday/{W_IDX}', 'App\Http\Controllers\WorkTimeController@show');
-Route::put('Holiday/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
-Route::post('Holiday', 'App\Http\Controllers\WorkTimeController@create');
-Route::delete('Holiday/{W_IDX}', 'App\Http\Controllers\WorkTimeController@destroy');
-
-
-
-
+Route::prefix('Holiday')->group(function () {
+    Route::get('/{pg}', [HolidayController::class, 'index']); // 取得所有使用者
+    Route::get('/{id}', [HolidayController::class, 'show']); // 取得特定使用者
+    Route::post('/', [HolidayController::class, 'store']); // 創建使用者
+    Route::put('/{id}', [HolidayController::class, 'update']); // 更新使用者
+    Route::delete('/{id}', [HolidayController::class, 'destroy']); // 刪除使用者
+});
+ 
+ 
 
 Route::get('AttendReport', 'App\Http\Controllers\DepController@index');
  
-
-
-
+ 
 
 Route::get('AttendRecord', 'App\Http\Controllers\DepController@index');
 Route::get('AttendRecord/{W_IDX}', 'App\Http\Controllers\WorkTimeController@show');
@@ -90,35 +100,31 @@ Route::post('AttendRecord', 'App\Http\Controllers\WorkTimeController@create');
 Route::delete('AttendRecord/{W_IDX}', 'App\Http\Controllers\WorkTimeController@destroy');
 
 
-
-
-
-
-
-Route::get('Schedule', 'App\Http\Controllers\DepController@index');
-Route::get('Schedule/{W_IDX}', 'App\Http\Controllers\WorkTimeController@show');
-Route::put('Schedule/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
-Route::post('Schedule', 'App\Http\Controllers\WorkTimeController@create');
-Route::delete('Schedule/{W_IDX}', 'App\Http\Controllers\WorkTimeController@destroy');
-
-
-
-
-Route::get('Absence', 'App\Http\Controllers\DepController@index');
-Route::get('Absence/{W_IDX}', 'App\Http\Controllers\WorkTimeController@show');
-Route::put('Absence/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
-Route::post('Absence', 'App\Http\Controllers\WorkTimeController@create');
-Route::delete('Absence/{W_IDX}', 'App\Http\Controllers\WorkTimeController@destroy');
-
-
+Route::prefix('Schedule')->group(function () {
+    Route::get('/{pg}', [HolidayController::class, 'index']); // 取得所有使用者
+    Route::get('/{id}', [HolidayController::class, 'show']); // 取得特定使用者
+    Route::post('/', [HolidayController::class, 'store']); // 創建使用者
+    Route::put('/{id}', [HolidayController::class, 'update']); // 更新使用者
+    Route::delete('/{id}', [HolidayController::class, 'destroy']); // 刪除使用者
+});
  
-Route::get('OverTime', 'App\Http\Controllers\DepController@index');
-Route::get('OverTime/{W_IDX}', 'App\Http\Controllers\WorkTimeController@show');
-Route::put('OverTime/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
-Route::post('OverTime', 'App\Http\Controllers\WorkTimeController@create');
-Route::delete('OverTime/{W_IDX}', 'App\Http\Controllers\WorkTimeController@destroy');
+  
 
+Route::prefix('OverTime')->group(function () {
+    Route::get('/{pg}', [OverTimeController::class, 'index']); // 取得所有使用者
+    Route::get('/{id}', [OverTimeController::class, 'show']); // 取得特定使用者
+    Route::post('/', [OverTimeController::class, 'store']); // 創建使用者
+    Route::put('/{id}', [OverTimeController::class, 'update']); // 更新使用者
+    Route::delete('/{id}', [OverTimeController::class, 'destroy']); // 刪除使用者
+});
 
+Route::prefix('Absence')->group(function () {
+    Route::get('/{pg}', [AbsenceController::class, 'index']); // 取得所有使用者
+    Route::get('/{id}', [AbsenceController::class, 'show']); // 取得特定使用者
+    Route::post('/', [AbsenceController::class, 'store']); // 創建使用者
+    Route::put('/{id}', [AbsenceController::class, 'update']); // 更新使用者
+    Route::delete('/{id}', [AbsenceController::class, 'destroy']); // 刪除使用者
+});
 
 
 Route::get('AttendSet', 'App\Http\Controllers\DepController@index');
@@ -159,89 +165,77 @@ Route::delete('AutoConvertSetting/{W_IDX}', 'App\Http\Controllers\WorkTimeContro
 Route::prefix('Users')->group(function () {
     Route::get('/{pg}', [UsersController::class, 'index']); // 取得所有使用者
     Route::get('/{id}', [UsersController::class, 'show']); // 取得特定使用者
+    Route::get('/Previous/{id}', [UsersController::class, 'Previous']); // 取得 Previous 使用者
+    Route::get('/Next/{id}', [UsersController::class, 'Next']); // 取得 Next 使用者
     Route::post('/', [UsersController::class, 'store']); // 創建使用者
     Route::put('/{id}', [UsersController::class, 'update']); // 更新使用者
     Route::delete('/{id}', [UsersController::class, 'destroy']); // 刪除使用者
 });
 
-// Route::get('Users/{pg}', 'App\Http\Controllers\UsersController@index');
 
-// Route::get('Users/Next/{id}', 'App\Http\Controllers\UsersController@index');
-// Route::get('Users/Previous/{id}', 'App\Http\Controllers\UsersController@index');
+Route::prefix('Readers')->group(function () {
+    Route::get('/{pg}', [ReaderController::class, 'index']); // 取得所有 
+    Route::get('/{id}', [ReaderController::class, 'show']); // 取得特定 
+    Route::post('/', [ReaderController::class, 'create']); // 創建 
+    Route::put('/{id}', [ReaderController::class, 'update']); // 更新 
+    Route::delete('/{id}', [ReaderController::class, 'destroy']); // 刪除 
+    Route::put('/toggle', [ReaderController::class, 'UpdatePollingStatus']); // 更新 
+
+    Route::put('/ReadersFaceReader/{id}', [ReaderController::class, 'UpdateHKFaceReaderParam']); // 更新 
+
+    Route::get('/Param/{id}', [ReaderController::class, 'ReaderParam']); // 取得特定 
+    Route::get('/Member/{id}/{pg}', [ReaderController::class, 'ReaderMember']); // 取得特定 
 
 
-// Route::put('Users/{id}', 'App\Http\Controllers\WorkTimeController@store');
-// Route::delete('Users/{id}', 'App\Http\Controllers\UsersController@destroy');
-// Route::post('Users', 'App\Http\Controllers\UsersController@create');
-//   Route::put('Users/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
-// Route::delete('Users/{id}', 'App\Http\Controllers\UsersController@destroy');
-// Route::post('Users', 'App\Http\Controllers\UsersController@create');
+    Route::get('/Holiday/{id}', [ReaderController::class, 'ReaderHoliday']); // 取得特定
+    Route::get('/TimeZoneHoliday/{id}', [ReaderController::class, 'ReaderTZ']); // 取得特定
+    Route::get('/TimeZoneName/{id}', [ReaderController::class, 'ReaderTZN']); // 取得特定
+    Route::get('/HolidayCtrl/{id}', [ReaderController::class, 'ReaderHolidayCtrl']); // 取得特定
+    Route::get('/TimeFrame/{id}', [ReaderController::class, 'ReaderTimeFrame']); // 取得特定
+    Route::get('/Bell/{id}', [ReaderController::class, 'ReaderBell']); // 取得特定
+    Route::get('/Light/{id}', [ReaderController::class, 'ReaderLight']); // 取得特定
+    Route::get('/Camera/{id}', [ReaderController::class, 'ReaderCarama']); // 取得特定
+    Route::get('/LightName/{id}', [ReaderController::class, 'ReaderLightName']); // 取得特定
+
+});
+
+ 
+
+  
   
 
+Route::get('Groups/{pg}',     [GroupController::class, 'index']  );
+Route::get('GroupsCount',    [GroupController::class, 'GetCount']   );
 
 
 
 
 
 
-Route::get('Groups/{pg}', 'App\Http\Controllers\GroupController@index');
-Route::get('GroupsCount', 'App\Http\Controllers\GroupController@GetCount');
+Route::get('GroupsPersonal/{pg}',     [GroupController::class, 'PersonalGroup']    );
+ 
+Route::get('GroupsReaderSet/{id}/{pg}',    [GroupController::class, 'GroupReaderSet']    );
+
+Route::get('GroupsUserList/{id}/{pg}',   [GroupController::class, 'GroupUserList']  );
+Route::get('GroupsUserListCount/{id}',    [GroupController::class, 'GroupUserCount']    );
+Route::get('GetReaderFromGIdx/{GIdxStr}', 'App\Http\Controllers\UsersController@GetCardListFromGIdx')   ;
 
 
+Route::post('Groups',   [GroupController::class, 'create']);
+Route::put('Groups',    [GroupController::class, 'update']    );
+Route::delete('Groups/{id}',     [GroupController::class, 'destroy']   );
 
 
-
-
-Route::get('GroupsPersonal/{pg}', 'App\Http\Controllers\GroupController@PersonalGroup');
-// Get_Group_ReaderSet_Json.php 
-Route::get('GroupsReaderSet/{id}/{pg}', 'App\Http\Controllers\GroupController@GroupReaderSet');
-//DB_Group_UserList.php
-Route::get('GroupsUserList/{id}/{pg}', 'App\Http\Controllers\GroupController@GroupUserList');
-Route::get('GroupsUserListCount/{id}', 'App\Http\Controllers\GroupController@GroupUserCount');
-Route::get('GetReaderFromGIdx/{id}', 'App\Http\Controllers\UsersController@GetCardListFromGIdx');
-
-
-Route::post('Groups', 'App\Http\Controllers\GroupController@create');
-Route::put('Groups', 'App\Http\Controllers\GroupController@update');
-Route::delete('Groups/{id}', 'App\Http\Controllers\GroupController@destroy');
-
-
-
-Route::get('ReaderMonitor', 'App\Http\Controllers\AutoRecvController@index');
+ 
 Route::get('Map', 'App\Http\Controllers\AutoRecvController@index');
 Route::get('Map/{id}', 'App\Http\Controllers\AutoRecvController@index');
 
-
-Route::get('Readers/{pg}', 'App\Http\Controllers\ReaderController@index');
-// Route::get('Readers/{id}', 'App\Http\Controllers\ReaderController@show');
-Route::put('Readers/toggle', 'App\Http\Controllers\ReaderController@UpdatePollingStatus');
-
-Route::delete('Readers/{id}', 'App\Http\Controllers\ReaderController@destroy');
-
-Route::post('Readers', 'App\Http\Controllers\ReaderController@create');
-Route::put('ReadersFaceReader/{id}', 'App\Http\Controllers\ReaderController@UpdateHKFaceReaderParam');
-
-
-Route::get('ReaderParam/{id}', 'App\Http\Controllers\ReaderController@ReaderParam');
-Route::get('ReaderHoliday/{id}', 'App\Http\Controllers\ReaderController@ReaderHoliday');
-Route::get('ReaderTimeZoneHoliday/{id}', 'App\Http\Controllers\ReaderController@ReaderTZ');
-Route::get('ReaderTimeZoneName/{id}', 'App\Http\Controllers\ReaderController@ReaderTZN');
-Route::get('ReaderHolidayCtrl/{id}', 'App\Http\Controllers\ReaderController@ReaderHolidayCtrl');
-Route::get('ReaderTimeFrame/{id}', 'App\Http\Controllers\ReaderController@ReaderTimeFrame');
-Route::get('ReaderBell/{id}', 'App\Http\Controllers\ReaderController@ReaderBell');
-Route::get('ReaderLight/{id}', 'App\Http\Controllers\ReaderController@ReaderLight');
-Route::get('ReaderCamara/{id}', 'App\Http\Controllers\ReaderController@ReaderCarama');
-Route::get('ReaderLightName/{id}', 'App\Http\Controllers\ReaderController@ReaderLightName');
-Route::get('ReaderMember/{id}/{pg}', 'App\Http\Controllers\ReaderController@ReaderMember');
 
 
 Route::get('HolidayCategory', 'App\Http\Controllers\SysParamController@GetHolidayCategory');
 
 
-
-
-
-
+ 
 Route::get('Permission', 'App\Http\Controllers\AutoRecvController@index');
 Route::put('Permission/{W_IDX}', 'App\Http\Controllers\WorkTimeController@store');
 Route::delete('Permission/{id}', 'App\Http\Controllers\UsersController@destroy');
@@ -310,9 +304,12 @@ Route::get('/logout', function () {
  */
 Route::get('ReaderModel', 'App\Http\Controllers\ReaderController@ReaderModel');
 
+Route::prefix('System')->group(function () {
+    Route::get('/SysPolling', [SysParamController::class, 'PollingStatus']); // 取得所有使用者
+    Route::get('SysPolling/{val}', [SysParamController::class, 'SetPollingStatus']); // 取得特定使用者
+ 
+});
 
-Route::get('SysPolling', 'App\Http\Controllers\SysParamController@PollingStatus');
-Route::get('SysPolling/{val}', 'App\Http\Controllers\SysParamController@SetPollingStatus');
  
 
 // 語言檔 API 路由

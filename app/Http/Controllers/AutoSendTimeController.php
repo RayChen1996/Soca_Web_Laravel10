@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+
+/**
+ 
+ * @OA\Tag(name="AutoSendTime")
+ */
 class AutoSendTimeController extends Controller
 {
     /**

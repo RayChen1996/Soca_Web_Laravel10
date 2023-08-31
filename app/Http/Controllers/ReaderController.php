@@ -3,9 +3,29 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; // 导入 DB 类
 use App\Models\Reader;
-
+ /**
+ 
+ * @OA\Tag(name="Readers")
+ */
 class ReaderController extends Controller
 {
+
+         
+/**
+     * @OA\Get(
+     *     path="/api/Readers/{pg}",
+     *     summary="Get Reader data",
+     *  @OA\Parameter(
+ *         name="pg",
+ *         in="path",
+ *         required=true,
+ *         description="Page number for pagination 45",
+ *         @OA\Schema(type="integer")
+ *     ),
+     *     @OA\Response(response="200", description="List of Readers"),
+     *     tags={"Readers"}
+     * )
+     */
     public function index($pg){
 
         $page = $pg;
@@ -40,7 +60,31 @@ class ReaderController extends Controller
 
 
 
-
+        /**
+     * @OA\Post(
+     *     path="/api/Readers/",
+     *     summary="Insert reader data",
+  *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="R_NO", type="integer", description="Reader number"),
+ *             @OA\Property(property="R_MODEL", type="integer", description="Reader model"),
+ *             @OA\Property(property="R_NAME", type="string", description="Reader name"),
+ *             @OA\Property(property="R_INTERFACE", type="string", description="Reader interface"),
+ *             @OA\Property(property="R_TIMEOUT", type="integer", description="Reader timeout"),
+ *             @OA\Property(property="R_MAP_IDX", type="integer", description="Reader map index"),
+ *             @OA\Property(property="R_READ_POINTER3", type="integer", description="Reader read pointer 3"),
+ *             @OA\Property(property="R_READ_POINTER4", type="integer", description="Reader read pointer 4"),
+ *             @OA\Property(property="POLLING", type="integer", description="Polling value"),
+ *             @OA\Property(property="CREATETIME", type="string", format="date-time", description="Creation time"),
+ *         )
+ *     ),
+     *     @OA\Response(response="200", description="create Users  "),
+     *     @OA\Response(response="500", description="Failed to create reader"),
+     *     tags={"Readers"}
+     * )
+     */
     public function create(Request $request){
 
         $requestData = $request->all(); // 获取从前端传来的数据
@@ -71,10 +115,9 @@ class ReaderController extends Controller
         } else {
             return response()->json(['message' => 'Failed to create reader'], 500);
         }
-        // $reader = DB::select('SELECT R_IDX ,R_NO ,R_MODEL,R_NAME,R_INTERFACE,R_TIMEOUT,POLLING,R_READ_IDX, CREATETIME, EDITTIME FROM READER WHERE R_IDX = ?', [$id]);
-        // return response()->json($reader);
+ 
     }
-
+   
     public function UpdateHKFaceReaderParam(Request $request)
     {
         $requestData = $request->all();
