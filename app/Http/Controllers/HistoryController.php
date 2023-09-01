@@ -21,7 +21,7 @@ class HistoryController extends Controller
  * @OA\Get(
  *   path="/api/history/{pg}",
  *     summary="Get a list of history",
- *  @OA\Parameter(
+ * @OA\Parameter(
  *         name="pg",
  *         in="path",
  *         required=true,
@@ -203,10 +203,6 @@ class HistoryController extends Controller
     }
 
 
-
-
-
-    
     public function showPatralReportReport($id)
     {
         $history = History::find($id);
@@ -267,66 +263,52 @@ class HistoryController extends Controller
         return response()->json($history);
     }
 
-
-
-             /**
-     * @OA\Post(
-     *     path="/api/history/",
-     *     summary="Create History data",
-  *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="R_NO", type="integer", description="Reader number"),
- *             @OA\Property(property="R_MODEL", type="integer", description="Reader model"),
- *             @OA\Property(property="R_NAME", type="string", description="Reader name"),
- *             @OA\Property(property="R_INTERFACE", type="string", description="Reader interface"),
- *             @OA\Property(property="R_TIMEOUT", type="integer", description="Reader timeout"),
- *             @OA\Property(property="R_MAP_IDX", type="integer", description="Reader map index"),
- *             @OA\Property(property="R_READ_POINTER3", type="integer", description="Reader read pointer 3"),
- *             @OA\Property(property="R_READ_POINTER4", type="integer", description="Reader read pointer 4"),
- *             @OA\Property(property="POLLING", type="integer", description="Polling value"),
- *             @OA\Property(property="CREATETIME", type="string", format="date-time", description="Creation time"),
- *         )
- *     ),
-     *     @OA\Response(response="200", description="Delete historys Id"),
-     *     @OA\Response(response="500", description="Failed to create historys"),
-     *     tags={"History"}
-     * )
-     */
+/**
+ * @OA\Post(
+ *     path="/api/history",
+ *     summary="Create One History data",
+ *     @OA\RequestBody(
+*         required=true,
+*         @OA\JsonContent(
+*             type="object",
+*             @OA\Property(property="H_CARD", type="string",default="0000000001", description=""),
+*             @OA\Property(property="H_DATE", type="string", default="20230901",description=""),
+*             @OA\Property(property="H_TIME", type="string", default="120000",description=""),
+*             @OA\Property(property="H_DATETIME", type="string", default="01.09.2023, 23:59:59.000",format="date-time", description=""),
+*             @OA\Property(property="H_STATE", type="integer", default="1",description=""),
+*             @OA\Property(property="H_RECVDATETIME", type="string", default="09.02.2023, 10:51:42.000",description=""),
+*             @OA\Property(property="H_SUBREADER", type="integer", description=""),
+*             @OA\Property(property="H_SUBREADERNO", type="integer", description=""),
+*             @OA\Property(property="R_IDX", type="integer", default="1", description="R_IDX"),
+*             @OA\Property(property="H_READERMODEL", type="integer",default="501", description="READERMODEL"),
+*         )
+*     ),
+*     @OA\Response(response="200", description="Insert history"),
+*     @OA\Response(response="500", description="Failed to create historys"),
+*     tags={"History"}
+* )
+*/
     public function create(Request $request)
     {
         $requestData = $request->all();
         $insertData = [
-            'U_NAME' => $requestData['UName'],
+            'H_CARD' => $requestData['H_CARD'],
+            'H_DATE' => $requestData['H_DATE'],
+            'H_TIME' => $requestData['H_TIME'],
+            'H_DATETIME' => $requestData['H_DATETIME'],
+            'H_STATE' => $requestData['H_STATE'],
+            'H_RECVDATETIME' => $requestData['H_RECVDATETIME'],
+            'H_SUBREADER' => $requestData['H_SUBREADER'],
+            'H_SUBREADERNO' => $requestData['H_SUBREADERNO'],
+            'R_IDX' => $requestData['R_IDX'],
+            'H_READERMODEL' => $requestData['H_READERMODEL']
         ];
-
         // 执行插入操作
-        $inserted = DB::table('USERS')->insert($insertData);
-
-
-        $lastUserIdx = History::orderBy('U_IDX', 'desc')->value('U_IDX');
-
-
-
-
-        $insertData = [
-            'C_CARD' => $requestData['Card'],
-            'U_IDX' =>  $lastUserIdx,
-            'C_PW'=> 0
-        ];
-
-        // 执行插入操作
-        $inserted = DB::table('CARDS')->insert($insertData);
-
-
+        $inserted = DB::table('HISTORYS')->insert($insertData);
         if ($inserted) {
-            return response()->json(['message' => 'Reader created successfully']);
+            return response()->json(['message' => 'History created successfully',201]);
         } else {
-            return response()->json(['message' => 'Failed to New User'], 200);
+            return response()->json(['message' => 'Failed to New History'], 401);
         }
     }
-
-
-
 }

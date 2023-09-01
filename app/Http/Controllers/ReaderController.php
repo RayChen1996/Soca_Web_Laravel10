@@ -8,9 +8,7 @@ use App\Models\Reader;
  * @OA\Tag(name="Readers")
  */
 class ReaderController extends Controller
-{
-
-         
+{         
 /**
      * @OA\Get(
      *     path="/api/Readers/{pg}",
@@ -59,61 +57,58 @@ class ReaderController extends Controller
     }
 
 
-
-        /**
-     * @OA\Post(
-     *     path="/api/Readers/",
-     *     summary="Insert reader data",
-  *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="R_NO", type="integer", description="Reader number"),
- *             @OA\Property(property="R_MODEL", type="integer", description="Reader model"),
- *             @OA\Property(property="R_NAME", type="string", description="Reader name"),
- *             @OA\Property(property="R_INTERFACE", type="string", description="Reader interface"),
- *             @OA\Property(property="R_TIMEOUT", type="integer", description="Reader timeout"),
- *             @OA\Property(property="R_MAP_IDX", type="integer", description="Reader map index"),
- *             @OA\Property(property="R_READ_POINTER3", type="integer", description="Reader read pointer 3"),
- *             @OA\Property(property="R_READ_POINTER4", type="integer", description="Reader read pointer 4"),
- *             @OA\Property(property="POLLING", type="integer", description="Polling value"),
- *             @OA\Property(property="CREATETIME", type="string", format="date-time", description="Creation time"),
- *         )
- *     ),
-     *     @OA\Response(response="200", description="create Users  "),
-     *     @OA\Response(response="500", description="Failed to create reader"),
-     *     tags={"Readers"}
-     * )
-     */
+/**
+ * @OA\Post(
+*     path="/api/Readers/",
+*     summary="Insert reader data",
+*     @OA\RequestBody(
+*         required=true,
+*         @OA\JsonContent(
+*             type="object",
+*             @OA\Property(property="R_NO", type="integer", description="Reader number"),
+*             @OA\Property(property="R_MODEL", type="integer", description="Reader model"),
+*             @OA\Property(property="R_NAME", type="string", description="Reader name"),
+*             @OA\Property(property="R_INTERFACE", type="string", description="Reader interface"),
+*             @OA\Property(property="R_TIMEOUT", type="integer", description="Reader timeout"),
+*             @OA\Property(property="R_MAP_IDX", type="integer", description="Reader map index"),
+*             @OA\Property(property="R_READ_POINTER3", type="integer", description="Reader read pointer 3"),
+*             @OA\Property(property="R_READ_POINTER4", type="integer", description="Reader read pointer 4"),
+*             @OA\Property(property="POLLING", type="integer", description="Polling value"),
+*             @OA\Property(property="CREATETIME", type="string", format="date-time", description="Creation time"),
+*         )
+*     ),
+*     @OA\Response(response="200", description="create Users  "),
+*     @OA\Response(response="500", description="Failed to create reader"),
+*     tags={"Readers"}
+* )
+*/
     public function create(Request $request){
 
-        $requestData = $request->all(); // 获取从前端传来的数据
+        $requestData = $request->all();  
 
         // 假设 $requestData 包含了前端传递的读者信息，例如 $requestData['R_NO']、$requestData['R_MODEL'] 等
-
-        // 构建插入数组
+ 
         $insertData = [
             'R_NO' => intval($requestData['R_NO']),
             'R_MODEL' => intval($requestData['R_MODEL']),
             'R_NAME' => $requestData['R_NAME'],
             'R_INTERFACE' =>$requestData['R_INTERFACE'],
             'R_TIMEOUT'=>intval($requestData['R_TIMEOUT']),
+            'R_PARAMETER'=>$requestData['Param'],
             'R_MAP_IDX'=>1,
             'R_READ_POINTER3'=>1,
             'R_READ_POINTER4'=>1,
             'POLLING'=>1,
-            'CREATETIME' => now()
-            // 'EDITTIME' => now(),
-        ];
-        // return json_encode($insertData);
+            'CREATETIME' => now() 
+        ]; 
 
         // 执行插入操作
         $inserted = DB::table('READER')->insert($insertData);
 
         if ($inserted) {
-            return response()->json(['message' => 'Reader created successfully']);
+            return response()->json(['message' => 'Reader created successfully',201]);
         } else {
-            return response()->json(['message' => 'Failed to create reader'], 500);
+            return response()->json(['message' => 'Failed to create reader'], 401);
         }
  
     }

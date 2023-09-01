@@ -37,8 +37,8 @@ use App\Http\Controllers\SysParamController;
 Route::get('/api-docs', 'App\Http\Controllers\SwaggerController@index');
 
 Route::prefix('history')->group(function () {
-    Route::get('/{pg}', [HistoryController::class, 'index']); // 取得所有使用者
-    Route::get('/show/{id}', [HistoryController::class, 'show']); // 取得特定使用者
+    Route::get('/{pg}', [HistoryController::class, 'index']); // 取得所有 
+    Route::get('/show/{id}', [HistoryController::class, 'show']); // 取得特定 
   
     Route::get('/simpleAttend/{pg}', 'App\Http\Controllers\HistoryController@showSimpleAttendReport');
     Route::get('/CardTimesUse/{pg}', 'App\Http\Controllers\HistoryController@showCardTimesUseReport');

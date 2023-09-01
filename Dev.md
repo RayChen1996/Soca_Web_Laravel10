@@ -91,6 +91,71 @@ php artisan serve --port=XXXX
 ```
 "harrygulliford/laravel-firebird": "^3.2", //Firebird Client Lib
 "swagger-api/swagger-ui": "^5.4" //Swagger Doc 套件
+
+
+```
+
+
+### Apache httpd.Conf (Windows)
+```
+<VirtualHost *:7791>
+    DocumentRoot "C:/WEB_SERVER/Apache3/Apache24/soca/public/www"
+    ServerName 127.0.0.1
+    AddType application/x-httpd-php .php .html
+
+    # Allow CGI execution
+    Options +ExecCGI
+     <Directory C:/WEB_SERVER/Apache3/Apache24/soca/public/www>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+
+    <Directory "C:/WEB_SERVER/Apache3/Apache24/soca/public/cgi-bin">
+        Options +ExecCGI
+        AddHandler cgi-script .cgi
+        AddType application/x-httpd-php .php .html
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ProxyPass "/api" "http://127.0.0.1:7792/api"
+    ProxyPassReverse "/api" "http://127.0.0.1:7792/api"
+  
+    <Directory "C:/WEB_SERVER/Apache3/Apache24/soca/public">
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+ 
+
+ 
+
+
+<VirtualHost *:7792>
+    DocumentRoot "C:/WEB_SERVER/Apache3/Apache24/soca/public"
+    ServerName 127.0.0.1
+    AddType application/x-httpd-php .php .html
+
+    # Allow CGI execution
+    Options +ExecCGI
+    
+
+
+    <Directory "C:/WEB_SERVER/Apache3/Apache24/soca/public/cgi-bin">
+        Options +ExecCGI
+        AddHandler cgi-script .cgi
+        AddType application/x-httpd-php .php .html
+        AllowOverride All
+        Require all granted
+    </Directory>
+  
+    <Directory "C:/WEB_SERVER/Apache3/Apache24/soca/public">
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
 ```
 
 ### 其他

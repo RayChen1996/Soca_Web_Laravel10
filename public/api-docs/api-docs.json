@@ -112,59 +112,67 @@
                 }
             }
         },
-        "/api/history/": {
+        "/api/history": {
             "post": {
                 "tags": [
                     "History"
                 ],
-                "summary": "Create History data",
-                "operationId": "f3d31f731d4ada9121c20ce7b79fb409",
+                "summary": "Create One History data",
+                "operationId": "b411a601c4661171a7e9fb04fc52936c",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "R_NO": {
-                                        "description": "Reader number",
-                                        "type": "integer"
-                                    },
-                                    "R_MODEL": {
-                                        "description": "Reader model",
-                                        "type": "integer"
-                                    },
-                                    "R_NAME": {
-                                        "description": "Reader name",
-                                        "type": "string"
-                                    },
-                                    "R_INTERFACE": {
-                                        "description": "Reader interface",
-                                        "type": "string"
-                                    },
-                                    "R_TIMEOUT": {
-                                        "description": "Reader timeout",
-                                        "type": "integer"
-                                    },
-                                    "R_MAP_IDX": {
-                                        "description": "Reader map index",
-                                        "type": "integer"
-                                    },
-                                    "R_READ_POINTER3": {
-                                        "description": "Reader read pointer 3",
-                                        "type": "integer"
-                                    },
-                                    "R_READ_POINTER4": {
-                                        "description": "Reader read pointer 4",
-                                        "type": "integer"
-                                    },
-                                    "POLLING": {
-                                        "description": "Polling value",
-                                        "type": "integer"
-                                    },
-                                    "CREATETIME": {
-                                        "description": "Creation time",
+                                    "H_CARD": {
+                                        "description": "",
                                         "type": "string",
-                                        "format": "date-time"
+                                        "default": "0000000001"
+                                    },
+                                    "H_DATE": {
+                                        "description": "",
+                                        "type": "string",
+                                        "default": "20230901"
+                                    },
+                                    "H_TIME": {
+                                        "description": "",
+                                        "type": "string",
+                                        "default": "120000"
+                                    },
+                                    "H_DATETIME": {
+                                        "description": "",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "default": "01.09.2023, 23:59:59.000"
+                                    },
+                                    "H_STATE": {
+                                        "description": "",
+                                        "type": "integer",
+                                        "default": "1"
+                                    },
+                                    "H_RECVDATETIME": {
+                                        "description": "",
+                                        "type": "string",
+                                        "default": "09.02.2023, 10:51:42.000"
+                                    },
+                                    "H_SUBREADER": {
+                                        "description": "",
+                                        "type": "integer"
+                                    },
+                                    "H_SUBREADERNO": {
+                                        "description": "",
+                                        "type": "integer"
+                                    },
+                                    "R_IDX": {
+                                        "description": "R_IDX",
+                                        "type": "integer",
+                                        "default": "1"
+                                    },
+                                    "H_READERMODEL": {
+                                        "description": "READERMODEL",
+                                        "type": "integer",
+                                        "default": "501"
                                     }
                                 },
                                 "type": "object"
@@ -174,7 +182,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Delete historys Id"
+                        "description": "Insert history"
                     },
                     "500": {
                         "description": "Failed to create historys"
