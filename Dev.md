@@ -85,3 +85,27 @@ php artisan serve --port=XXXX
 #### 2.PHP 8.2.9
 #### 3.Laravel 10
 #### 4.Firebird fbClient.dll 放到php7.4目錄下 php.ini => extension=php_firebird 取消註解
+
+
+### Composer 套件
+```
+"harrygulliford/laravel-firebird": "^3.2", //Firebird Client Lib
+"swagger-api/swagger-ui": "^5.4" //Swagger Doc 套件
+```
+
+### 其他
+```
+//產生Swagger Doc 
+php artisan l5-swagger:generate
+
+
+```
+
+
+### Note
+```
+
+1. API 需加入驗證
+2. 
+
+```
